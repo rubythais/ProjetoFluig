@@ -10,27 +10,27 @@
     <script src="/portal/resources/js/jquery/jquery-ui.min.js"></script>
     <script src="/portal/resources/js/mustache/mustache-min.js"></script>
     <script src="/style-guide/js/fluig-style-guide.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js"></script>
     
     <style>
         /* === Estilização Geral === */
         body {
             background: linear-gradient(135deg, #f5f7fa 0%, #e8eef3 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: 0;
+            margin: 0;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
         
         .fluig-style-guide {
             background: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            max-width: 1000px;
+            border-radius: 0;
+            box-shadow: none;
             width: 100%;
-            margin: 0 auto;
+            height: 100vh;
+            margin: 0;
             padding: 35px;
+            overflow-y: auto;
         }
         
         .container-fluid {
@@ -44,18 +44,6 @@
             padding: 20px 0 30px;
             margin-bottom: 30px !important;
             border-bottom: 2px solid #e8eef3;
-        }
-        
-        .header-icon {
-            width: 70px;
-            height: 70px;
-            background: linear-gradient(135deg, #2c7a7b 0%, #319795 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 15px;
-            box-shadow: 0 4px 12px rgba(44, 122, 123, 0.25);
         }
         
         .form-title {
@@ -176,37 +164,6 @@
             padding-right: 35px;
         }
         
-        /* === Mensagens de Erro === */
-        .help-block.text-danger {
-            font-size: 0.85em;
-            margin-top: 5px;
-            color: #e53e3e !important;
-            display: flex !important;
-            align-items: center;
-            background: #fff5f5;
-            padding: 8px 12px;
-            border-radius: 6px;
-            border-left: 3px solid #e53e3e;
-        }
-        
-        .help-block.text-danger::before {
-            content: '⚠';
-            margin-right: 5px;
-            font-size: 1.1em;
-        }
-        
-        .has-error .form-control {
-            border-color: #e53e3e !important;
-            background-color: #fff5f5 !important;
-            animation: shake 0.4s;
-        }
-        
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25%, 75% { transform: translateX(-4px); }
-            50% { transform: translateX(4px); }
-        }
-        
         /* === Alerta de Validação === */
         .alert-validation {
             background: #fff5f5;
@@ -250,118 +207,140 @@
             color: #718096 !important;
             font-size: 0.85em;
         }
+
         
-        /* === Datepicker (Calendário) === */
-        .ui-datepicker {
-            z-index: 99999 !important;
-            background: #2d3748 !important;
-            border: 3px solid #1a202c !important;
-            border-radius: 10px !important;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5) !important;
-            padding: 15px !important;
-            opacity: 1 !important;
-            position: absolute !important;
+        /* === Upload de Arquivo === */
+        .file-upload-container {
+            position: relative;
+            display: inline-block;
+            width: 100%;
         }
         
-        .ui-datepicker * {
-            opacity: 1 !important;
+        .file-upload-input {
+            position: absolute;
+            left: -9999px;
         }
         
-        .ui-datepicker-header {
-            background: #1a202c !important;
-            color: white !important;
-            border-radius: 8px !important;
-            padding: 12px !important;
-            margin-bottom: 15px !important;
-            border: 2px solid #319795 !important;
+        .file-upload-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 150px;
+            border: 2px dashed #cbd5e0;
+            border-radius: 8px;
+            background: #f7fafc;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 20px;
+            text-align: center;
+            flex-direction: column;
         }
         
-        .ui-datepicker-title {
-            color: white !important;
-            font-weight: 700 !important;
-            font-size: 1.1em !important;
+        .file-upload-label:hover {
+            border-color: #319795;
+            background: #eef5f5;
         }
         
-        .ui-datepicker-calendar {
-            background: #2d3748 !important;
-            width: 100% !important;
+        .file-upload-label.dragover {
+            border-color: #319795;
+            background: #dff2f1;
+            box-shadow: 0 0 0 3px rgba(49, 151, 149, 0.1);
+        }
+    
+        
+        .file-upload-text {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 5px;
         }
         
-        .ui-datepicker td {
-            padding: 3px !important;
-            background: #2d3748 !important;
+        .file-upload-subtext {
+            font-size: 0.85em;
+            color: #718096;
         }
         
-        .ui-datepicker td a {
-            text-align: center !important;
-            padding: 10px !important;
-            border-radius: 6px !important;
-            transition: all 0.2s ease !important;
-            background: #4a5568 !important;
-            color: white !important;
-            display: block !important;
-            text-decoration: none !important;
-            font-weight: 600 !important;
-            border: 1px solid #718096 !important;
+        #preview-container {
+            margin-top: 15px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
         }
         
-        .ui-datepicker td a:hover {
-            background: #319795 !important;
-            color: white !important;
-            border-color: #319795 !important;
-            transform: scale(1.1) !important;
+        .preview-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
         }
         
-        .ui-datepicker td .ui-state-active {
-            background: #2c7a7b !important;
-            color: white !important;
-            border-color: #38b2ac !important;
-            font-weight: 700 !important;
+        .preview-item img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            display: block;
         }
         
-        .ui-datepicker td .ui-state-highlight {
-            background: #319795 !important;
-            color: white !important;
-            font-weight: 700 !important;
-            border-color: #38b2ac !important;
+        .preview-item .remove-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #e53e3e;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
         }
         
-        .ui-datepicker-prev,
-        .ui-datepicker-next {
-            cursor: pointer !important;
-            color: white !important;
-            background: #4a5568 !important;
-            padding: 5px 10px !important;
-            border-radius: 4px !important;
+        .preview-item .remove-btn:hover {
+            background: #c53030;
+            transform: scale(1.1);
         }
         
-        .ui-datepicker-prev:hover,
-        .ui-datepicker-next:hover {
-            background: #319795 !important;
+        .file-list {
+            margin-top: 15px;
         }
         
-        .ui-datepicker th {
-            color: white !important;
-            font-weight: 700 !important;
-            padding: 10px 0 !important;
-            background: #1a202c !important;
-            text-transform: uppercase !important;
-            font-size: 0.85em !important;
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            margin-bottom: 8px;
         }
         
-        .ui-datepicker tbody {
-            background: #2d3748 !important;
+        .file-item-name {
+            flex: 1;
+            color: #2d3748;
+            font-weight: 500;
+            word-break: break-word;
         }
         
-        .ui-datepicker-other-month {
-            opacity: 0.3 !important;
+        .file-item-remove {
+            background: #e53e3e;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.2s ease;
         }
         
-        /* Garante que o painel não esconda o calendário */
-        .panel-body {
-            overflow: visible;
+        .file-item-remove:hover {
+            background: #c53030;
         }
         
+
         /* === Responsividade === */
         @media (max-width: 768px) {
             .fluig-style-guide {
@@ -430,7 +409,7 @@
             <div class="col-xs-12 col-sm-4 col-md-4">
               <div class="form-group">
                 <label class="control-label" for="data_nascimento">Data de Nascimento <span class="text-danger">*</span></label>
-                <input type="text" id="data_nascimento" name="data_nascimento" class="form-control datepicker" data-mask="99/99/9999" placeholder="dd/mm/aaaa" required data-fluig-component="true" data-component-type="date_input" data-component-id="data_nascimento" data-component-label="Data de Nascimento" />
+                <input type="text" id="data_nascimento" name="data_nascimento" class="form-control" data-mask="99/99/9999" placeholder="dd/mm/aaaa" required data-fluig-component="true" data-component-type="date_input" data-component-id="data_nascimento" data-component-label="Data de Nascimento" />
                 <small class="help-block text-danger" id="erro_data_nascimento" style="display:none;">Por favor, preencha a data de nascimento.</small>
               </div>
             </div>
@@ -462,7 +441,7 @@
             <div class="col-xs-12 col-sm-4 col-md-4">
               <div class="form-group">
                 <label class="control-label" for="campo_data_consulta">Data da Consulta</label>
-                <input type="text" id="campo_data_consulta" name="campo_data_consulta" class="form-control datepicker" data-mask="99/99/9999" placeholder="dd/mm/aaaa" data-fluig-component="true" data-component-type="date_input" data-component-id="campo_data_consulta" data-component-label="Data da Consulta" />
+                <input type="text" id="campo_data_consulta" name="campo_data_consulta" class="form-control" data-mask="99/99/9999" placeholder="dd/mm/aaaa" data-fluig-component="true" data-component-type="date_input" data-component-id="campo_data_consulta" data-component-label="Data da Consulta" />
                 
               </div>
             </div>
@@ -513,12 +492,22 @@
         </div>
       </div>
       <div class="col-xs-12">
-        <div class="form-group text-center" style="margin-top: 30px;">
-          <button type="button" id="btnValidarFormulario" class="btn btn-primary btn-lg" style="background: linear-gradient(135deg, #2c7a7b 0%, #319795 100%); border: none; padding: 12px 40px; font-size: 1.1em; border-radius: 8px; box-shadow: 0 4px 12px rgba(44, 122, 123, 0.3); transition: all 0.3s ease;">
-            <i class="fluigicon fluigicon-check icon-sm"></i> Enviar Formulário
-          </button>
+        <div class="form-group">
+          <label class="control-label" for="campo_documentos"> Documentos e Exames Médicos</label>
+          <p class="text-muted" style="margin-bottom: 15px; font-size: 0.9em;">Anexe cópias de exames, resultados, documentos médicos relevantes ou qualquer material que auxilie na consulta.</p>
+          <div class="file-upload-container">
+            <input type="file" id="campo_documentos" name="campo_documentos" class="file-upload-input" multiple accept="image/*,.pdf,.doc,.docx" />
+            <label for="campo_documentos" class="file-upload-label">
+              <div class="file-upload-icon">📁</div>
+              <div class="file-upload-text">Clique ou arraste arquivos aqui</div>
+              <div class="file-upload-subtext">Aceita: Imagens, PDF, DOC, DOCX (máx. 10MB por arquivo)</div>
+            </label>
+            <div id="preview-container"></div>
+            <div id="file-list" class="file-list"></div>
+          </div>
         </div>
       </div>
+
         </div>
       </main>
     </div>
@@ -527,73 +516,188 @@
 
 <script>
 $(document).ready(function() {
-    // Inicializa os datepickers
-    $('.datepicker').datepicker({
-        dateFormat: 'dd/mm/yy',
-        changeMonth: true,
-        changeYear: true,
-        yearRange: '-100:+0'
-    });
+    // ========================================
+    // FORMATAÇÃO AUTOMÁTICA
+    // ========================================
+    if (typeof Cleave !== 'undefined') {
+        new Cleave('#campo_cpf', {
+            blocks: [3, 3, 3, 2],
+            delimiters: ['.', '.', '-'],
+            numericOnly: true
+        });
 
-    // Função de validação
+        new Cleave('#data_nascimento', {
+            date: true,
+            datePattern: ['d', 'm', 'Y']
+        });
+
+        new Cleave('#campo_data_consulta', {
+            date: true,
+            datePattern: ['d', 'm', 'Y']
+        });
+    }
+
+    // ========================================
+    // VALIDAÇÃO DE CAMPOS
+    // ========================================
     function validarCampo(campoId, erroId) {
-        var campo = $('#' + campoId);
-        var erro = $('#' + erroId);
-        var valor = campo.val().trim();
+        const $campo = $('#' + campoId);
+        const $erro = $('#' + erroId);
+        const valor = $campo.val().trim();
         
         if (valor === '') {
-            campo.closest('.form-group').addClass('has-error');
-            erro.show();
+            $campo.closest('.form-group').addClass('has-error');
+            $erro.show();
             return false;
         } else {
-            campo.closest('.form-group').removeClass('has-error');
-            erro.hide();
+            $campo.closest('.form-group').removeClass('has-error');
+            $erro.hide();
             return true;
         }
     }
 
-    // Limpa erros quando o usuário começa a digitar
-    $('input.form-control, textarea.form-control, select.form-control').on('input change', function() {
-        $(this).closest('.form-group').removeClass('has-error');
-        $(this).closest('.form-group').find('.help-block.text-danger').hide();
-    });
+    // ========================================
+    // GESTÃO DE UPLOAD DE ARQUIVOS
+    // ========================================
+    const fileInput = document.getElementById('campo_documentos');
+    const uploadLabel = document.querySelector('.file-upload-label');
+    const previewContainer = document.getElementById('preview-container');
+    const fileList = document.getElementById('file-list');
+    let uploadedFiles = [];
 
-    // Validação ao clicar no botão de enviar
+    function isValidFile(file) {
+        const maxSize = 10 * 1024 * 1024; // 10MB máximo
+        const validTypes = [
+            'image/jpeg', 'image/png', 'image/gif', 'image/jpg',
+            'application/pdf',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        ];
+        return file.size <= maxSize && validTypes.includes(file.type);
+    }
+
+    function getFileIcon(mimeType) {
+        if (mimeType.startsWith('image/')) return '🖼️';
+        if (mimeType === 'application/pdf') return '📕';
+        return '📄';
+    }
+
+    function displayFiles(files) {
+        previewContainer.innerHTML = '';
+        fileList.innerHTML = '';
+        uploadedFiles = [];
+
+        Array.from(files).forEach((file) => {
+            if (!isValidFile(file)) {
+                alert(`Arquivo inválido: ${file.name}. Máximo 10MB e apenas imagens, PDF ou DOC.`);
+                return;
+            }
+
+            const fileIndex = uploadedFiles.length;
+            uploadedFiles.push(file);
+
+            // Preview para imagens
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const previewDiv = document.createElement('div');
+                    previewDiv.className = 'preview-item';
+                    previewDiv.innerHTML = `
+                        <img src="${e.target.result}" alt="${file.name}">
+                        <button type="button" class="remove-btn" data-index="${fileIndex}">✕</button>
+                    `;
+                    previewContainer.appendChild(previewDiv);
+                };
+                reader.readAsDataURL(file);
+            }
+
+            // Item da lista de arquivos
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            fileItem.innerHTML = `
+                <span class="file-item-icon">${getFileIcon(file.type)}</span>
+                <span class="file-item-name">${file.name}</span>
+                <button type="button" class="file-item-remove" data-index="${fileIndex}">Remover</button>
+            `;
+            fileList.appendChild(fileItem);
+        });
+
+        attachFileRemoveHandlers();
+    }
+
+    function attachFileRemoveHandlers() {
+        document.querySelectorAll('.remove-btn, .file-item-remove').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const index = parseInt(btn.dataset.index);
+                uploadedFiles.splice(index, 1);
+                displayFiles(uploadedFiles);
+            });
+        });
+    }
+
+    if (fileInput) {
+        fileInput.addEventListener('change', (e) => {
+            displayFiles(e.target.files);
+        });
+    }
+
+    if (uploadLabel) {
+        uploadLabel.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadLabel.classList.add('dragover');
+        });
+
+        uploadLabel.addEventListener('dragleave', () => {
+            uploadLabel.classList.remove('dragover');
+        });
+
+        uploadLabel.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadLabel.classList.remove('dragover');
+            fileInput.files = e.dataTransfer.files;
+            displayFiles(e.dataTransfer.files);
+        });
+    }
+
+    // ========================================
+    // VALIDAÇÃO E SUBMISSÃO DO FORMULÁRIO
+    // ========================================
     $('#btnValidarFormulario').on('click', function(e) {
         e.preventDefault();
         e.stopPropagation();
         
-        var valido = true;
+        let isValid = true;
         
-        // Valida todos os campos obrigatórios
-        if (!validarCampo('campo_nome', 'erro_nome')) valido = false;
-        if (!validarCampo('data_nascimento', 'erro_data_nascimento')) valido = false;
-        if (!validarCampo('campo_telefone', 'erro_telefone')) valido = false;
-        if (!validarCampo('campo_cpf', 'erro_cpf')) valido = false;
+        // Validar campos obrigatórios
+        if (!validarCampo('campo_nome', 'erro_nome')) isValid = false;
+        if (!validarCampo('data_nascimento', 'erro_data_nascimento')) isValid = false;
+        if (!validarCampo('campo_telefone', 'erro_telefone')) isValid = false;
+        if (!validarCampo('campo_cpf', 'erro_cpf')) isValid = false;
+
+        // Validar email
+        const $emailField = $('#campo_email');
+        const email = $emailField.val().trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         
-        // Validação especial para email
-        var email = $('#campo_email').val().trim();
-        var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (email === '' || !emailRegex.test(email)) {
-            $('#campo_email').closest('.form-group').addClass('has-error');
-            if (email === '') {
-                $('#erro_email').text('Por favor, preencha um email válido.').show();
-            } else {
-                $('#erro_email').text('Por favor, insira um email no formato correto.').show();
-            }
-            valido = false;
+        if (!email || !emailRegex.test(email)) {
+            $emailField.closest('.form-group').addClass('has-error');
+            $('#erro_email').text('Por favor, insira um email válido.').show();
+            isValid = false;
+        } else {
+            $emailField.closest('.form-group').removeClass('has-error');
+            $('#erro_email').hide();
         }
-        
-        if (!valido) {
-            // Rola para o primeiro campo com erro
-            var firstError = $('.has-error').first();
-            if (firstError.length) {
+
+        // Se houver erros, scroll ao primeiro e mostrar toast
+        if (!isValid) {
+            const $firstError = $('.has-error').first();
+            if ($firstError.length) {
                 $('html, body').animate({
-                    scrollTop: firstError.offset().top - 100
+                    scrollTop: $firstError.offset().top - 100
                 }, 400);
             }
-            
-            // Mostra pop-up de erro
+
             if (typeof FLUIGC !== 'undefined' && FLUIGC.toast) {
                 FLUIGC.toast({
                     title: '⚠ Erro de Validação',
@@ -604,29 +708,26 @@ $(document).ready(function() {
             } else {
                 alert('⚠ Erro de Validação\n\nPor favor, preencha todos os campos obrigatórios corretamente.');
             }
-            
             return false;
-        } else {
-            // Se válido, mostra mensagem de sucesso e envia
-            if (typeof FLUIGC !== 'undefined' && FLUIGC.toast) {
-                FLUIGC.toast({
-                    title: '✓ Sucesso',
-                    message: 'Formulário validado com sucesso!',
-                    type: 'success',
-                    timeout: 3000
-                });
-            }
-            
-            // Envia o formulário do Fluig
-            setTimeout(function() {
-                $('#form_Agendamento_de_Consulta').submit();
-            }, 500);
         }
+
+        // Sucesso - submeter formulário
+        if (typeof FLUIGC !== 'undefined' && FLUIGC.toast) {
+            FLUIGC.toast({
+                title: '✓ Sucesso',
+                message: 'Formulário validado com sucesso!',
+                type: 'success',
+                timeout: 3000
+            });
+        }
+
+        setTimeout(() => {
+            $('#form_Agendamento_de_Consulta').submit();
+        }, 500);
     });
-    
-    // Previne o submit padrão do formulário
+
+    // Prevenir submissão se houver erros
     $('#form_Agendamento_de_Consulta').on('submit', function(e) {
-        // Verifica se a validação já foi feita
         if ($('.has-error').length > 0) {
             e.preventDefault();
             e.stopPropagation();
