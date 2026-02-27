@@ -1,0 +1,408 @@
+/**
+ * styles.css - CHANGELOG
+ * Estilos completos para o formulário de gerenciamento de changelog
+ */
+
+/* ========== GERAL ========== */
+* {
+	box-sizing: border-box;
+}
+
+html {
+	width: 100%;
+	height: 100%;
+}
+
+body {
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	background: linear-gradient(135deg, #f5f7fa 0%, #e8eef3 100%);
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	height: 100%;
+	min-height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: flex-start;
+}
+
+.fluig-style-guide {
+	width: 100%;
+	max-width: 100%;
+	margin: 0;
+	background: white;
+	border-radius: 0;
+	box-shadow: none;
+	padding: 30px;
+	box-sizing: border-box;
+	flex: 1;
+}
+
+/* ========== HEADER ========== */
+.changelog-header {
+	text-align: center;
+	margin-bottom: 30px;
+	padding-bottom: 20px;
+	border-bottom: 2px solid #e2e8f0;
+}
+
+.changelog-header h1 {
+	font-size: 2em;
+	color: #2d3748;
+	margin: 0 0 10px 0;
+}
+
+.changelog-header p {
+	color: #718096;
+	font-size: 1.1em;
+	margin: 0;
+}
+
+.alert {
+	padding: 15px 20px;
+	border-radius: 6px;
+	margin-bottom: 20px;
+	font-weight: 500;
+}
+
+.alert-danger {
+	background-color: #fee;
+	border-left: 4px solid #e53e3e;
+	color: #c53030;
+}
+
+.alert-success {
+	background-color: #f0fff4;
+	border-left: 4px solid #48bb78;
+	color: #2f855a;
+}
+
+.panel {
+	margin-bottom: 25px;
+	border-radius: 8px;
+	overflow: hidden;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.panel-header {
+	background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+	color: white;
+	padding: 15px 20px;
+	font-size: 1.2em;
+	font-weight: 600;
+	display: flex;
+	align-items: center;
+}
+
+.panel-header i {
+	margin-right: 10px;
+	font-size: 1.3em;
+}
+
+.panel-body {
+	background: white;
+	padding: 25px;
+	border: 1px solid #e2e8f0;
+	border-top: none;
+}
+
+.form-group {
+	margin-bottom: 20px;
+}
+
+.form-group label {
+	display: block;
+	font-weight: 600;
+	color: #2d3748;
+	margin-bottom: 8px;
+	font-size: 0.95em;
+}
+
+.form-group label .required {
+	color: #e53e3e;
+	margin-left: 3px;
+}
+
+.form-control {
+	width: 100%;
+	padding: 10px 12px;
+	border: 1px solid #cbd5e0;
+	border-radius: 6px;
+	font-size: 1em;
+	transition: all 0.3s ease;
+	box-sizing: border-box;
+}
+
+.form-control:focus {
+	outline: none;
+	border-color: #F59E0B;
+	box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+}
+
+.form-control:disabled,
+.form-control[readonly] {
+	background-color: #f7fafc;
+	cursor: not-allowed;
+	opacity: 0.7;
+}
+
+textarea.form-control {
+	min-height: 100px;
+	resize: vertical;
+}
+
+select.form-control {
+	cursor: pointer;
+}
+
+.row {
+	display: flex;
+	flex-wrap: wrap;
+	margin: 0 -10px;
+	width: 100%;
+}
+
+.col-sm-6 {
+	flex: 0 0 50%;
+	max-width: 50%;
+	padding: 0 10px;
+	box-sizing: border-box;
+}
+
+.col-sm-4 {
+	flex: 0 0 33.333%;
+	max-width: 33.333%;
+	padding: 0 10px;
+	box-sizing: border-box;
+}
+
+.col-sm-12 {
+	flex: 0 0 100%;
+	max-width: 100%;
+	padding: 0 10px;
+	box-sizing: border-box;
+}
+
+/* ========== TABLE ========== */
+.cambios-table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-top: 15px;
+}
+
+.cambios-table thead {
+	background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+	color: white;
+}
+
+.cambios-table th {
+	padding: 12px;
+	text-align: left;
+	font-weight: 600;
+	font-size: 0.9em;
+}
+
+.cambios-table tbody tr {
+	border-bottom: 1px solid #e2e8f0;
+	transition: background-color 0.2s ease;
+}
+
+.cambios-table tbody tr:nth-child(even) {
+	background-color: #f7fafc;
+}
+
+.cambios-table tbody tr:hover {
+	background-color: #edf2f7;
+}
+
+.cambios-table td {
+	padding: 12px;
+	font-size: 0.9em;
+	color: #2d3748;
+}
+
+.cambios-table .badge {
+	display: inline-block;
+	padding: 4px 10px;
+	border-radius: 12px;
+	font-size: 0.85em;
+	font-weight: 600;
+	text-transform: uppercase;
+}
+
+.badge-novidade {
+	background-color: #d6bcfa;
+	color: #553c9a;
+}
+
+.badge-melhoria {
+	background-color: #bee3f8;
+	color: #2c5282;
+}
+
+.badge-correcao {
+	background-color: #feebc8;
+	color: #c05621;
+}
+
+.badge-seguranca {
+	background-color: #fed7d7;
+	color: #c53030;
+}
+
+/* ========== BUTTONS ========== */
+.btn {
+	display: inline-block;
+	padding: 10px 20px;
+	border: none;
+	border-radius: 6px;
+	font-size: 1em;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	text-decoration: none;
+	text-align: center;
+}
+
+.btn:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn:active {
+	transform: translateY(0);
+}
+
+.btn-primary {
+	background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+	color: white;
+}
+
+.btn-primary:hover {
+	background: linear-gradient(135deg, #D97706 0%, #5b21b6 100%);
+}
+
+.btn-success {
+	background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+	color: white;
+}
+
+.btn-success:hover {
+	background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+}
+
+.btn-default {
+	background-color: #e2e8f0;
+	color: #2d3748;
+}
+
+.btn-default:hover {
+	background-color: #cbd5e0;
+}
+
+.btn-danger {
+	background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+	color: white;
+}
+
+.btn-sm {
+	padding: 6px 12px;
+	font-size: 0.85em;
+}
+
+.btn-block {
+	display: block;
+	width: 100%;
+}
+
+/* ========== MODAL ========== */
+.modal {
+	display: none;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.5);
+	z-index: 1000;
+	justify-content: center;
+	align-items: center;
+}
+
+.modal.show {
+	display: flex;
+}
+
+.modal-dialog {
+	background: white;
+	border-radius: 8px;
+	max-width: 600px;
+	width: 90%;
+	max-height: 90vh;
+	overflow-y: auto;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+	background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+	color: white;
+	padding: 20px;
+	border-radius: 8px 8px 0 0;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.modal-header h3 {
+	margin: 0;
+	font-size: 1.3em;
+}
+
+.modal-body {
+	padding: 25px;
+}
+
+.modal-footer {
+	padding: 15px 25px;
+	border-top: 1px solid #e2e8f0;
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+	.col-sm-6,
+	.col-sm-4 {
+		flex: 0 0 100%;
+		max-width: 100%;
+	}
+	
+	.fluig-style-guide {
+		padding: 20px;
+	}
+	
+	.cambios-table {
+		font-size: 0.85em;
+	}
+	
+	.cambios-table th,
+	.cambios-table td {
+		padding: 8px;
+	}
+}
+
+@media (max-width: 480px) {
+	.changelog-header h1 {
+		font-size: 1.5em;
+	}
+	
+	.btn {
+		width: 100%;
+		margin-bottom: 10px;
+	}
+	
+	.modal-dialog {
+		width: 95%;
+	}
+}
