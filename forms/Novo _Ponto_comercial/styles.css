@@ -1,0 +1,325 @@
+/* ========================================
+   ESTILOS PERSONALIZADOS - NOVO PONTO COMERCIAL
+   Baseado em Fluig Style Guide
+   ======================================== */
+
+/* ========== TABELAS ========== */
+.table {
+    background-color: #fff;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.table > thead > tr > th {
+    background-color: #ecf0f1;
+    color: #2c3e50;
+    font-weight: 600;
+    border-bottom: 2px solid #bdc3c7;
+    padding: 12px 15px;
+    text-align: left;
+}
+
+.table > tbody > tr {
+    border-bottom: 1px solid #ecf0f1;
+    transition: background-color 0.2s ease;
+}
+
+.table > tbody > tr:hover {
+    background-color: #f8f9fa;
+}
+
+.table > tbody > tr > td {
+    padding: 12px 15px;
+    vertical-align: middle;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: #fafbfc;
+}
+
+.table-striped > tbody > tr:nth-of-type(even) {
+    background-color: #ffffff;
+}
+
+.table-hover > tbody > tr:hover {
+    background-color: #ecf0f1;
+    cursor: pointer;
+}
+
+.table-condensed > thead > tr > th,
+.table-condensed > tbody > tr > td {
+    padding: 8px 12px;
+}
+
+.table.active > thead > tr {
+    background-color: #3498db;
+    color: #fff;
+}
+
+.table.active > thead > tr > th {
+    color: #fff;
+    border-bottom-color: #2980b9;
+}
+
+/* ========== FIELDSETS ========== */
+fieldset {
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 25px;
+    margin-bottom: 25px;
+    background-color: #fafbfc;
+}
+
+fieldset > legend {
+    width: auto;
+    padding: 8px 16px;
+    margin-bottom: 20px;
+    margin-left: 0;
+    background-color: #3498db;
+    color: #fff;
+    font-weight: 600;
+    font-size: 14px;
+    border-radius: 3px;
+    display: block;
+}
+
+.legend-content {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.legend-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+}
+
+.icon-svg {
+    width: 16px;
+    height: 16px;
+    fill: #ffffff;
+}
+
+/* ========== FORM CONTROLS ========== */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group > label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #2c3e50;
+    font-size: 13px;
+    white-space: normal;
+    word-wrap: break-word;
+}
+
+.form-control {
+    border: 1px solid #d0d7de;
+    border-radius: 4px;
+    padding: 10px 12px;
+    background-color: #fff;
+    font-size: 13px;
+    width: 100%;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    outline: none;
+}
+
+/* ========== CHECKBOXES E RADIO ========== */
+.checkbox,
+.radio {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding-left: 0;
+}
+
+.checkbox > label,
+.radio > label {
+    display: inline-flex;
+    align-items: center;
+    padding-left: 0;
+    margin-right: 15px;
+    margin-bottom: 0;
+    font-weight: normal;
+    cursor: pointer;
+    font-size: 13px;
+    color: #34495e;
+}
+
+.checkbox > label > input[type="checkbox"],
+.radio > label > input[type="radio"],
+.checkbox-inline > input[type="checkbox"],
+.radio-inline > input[type="radio"] {
+    margin-right: 8px;
+    margin-top: 2px;
+    cursor: pointer;
+    accent-color: #3498db;
+}
+
+.checkbox-inline {
+    display: inline-flex;
+    align-items: center;
+    padding-left: 0;
+    margin-right: 20px;
+    font-size: 13px;
+}
+
+.checkbox-inline > input[type="checkbox"] {
+    margin-right: 6px;
+    margin-top: 1px;
+}
+
+/* ========== GRID DE DIAS ========== */
+.days-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.days-grid .checkbox-inline {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    background-color: #ecf0f1;
+    border-radius: 4px;
+    margin-right: 0;
+    border: 1px solid #d0d7de;
+    transition: all 0.2s ease;
+}
+
+.days-grid .checkbox-inline:hover {
+    background-color: #d5dbdb;
+    border-color: #3498db;
+}
+
+.days-grid .checkbox-inline > input[type="checkbox"]:checked + label,
+.days-grid input[type="checkbox"]:checked ~ .checkbox-inline {
+    background-color: #3498db;
+    color: #fff;
+    border-color: #2980b9;
+}
+
+/* ========== LABEL TEXT ========== */
+.label-text {
+    display: inline;
+    font-size: 13px;
+}
+
+/* ========== TEXT UTILITIES ========== */
+.text-muted {
+    color: #95a5a6;
+}
+
+.text-primary {
+    color: #3498db;
+}
+
+.text-success {
+    color: #27ae60;
+}
+
+.text-warning {
+    color: #e67e22;
+}
+
+.text-danger {
+    color: #e74c3c;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+    .table {
+        font-size: 12px;
+    }
+
+    .table > thead > tr > th,
+    .table > tbody > tr > td {
+        padding: 8px 10px;
+    }
+
+    fieldset {
+        padding: 15px;
+    }
+
+    fieldset > legend {
+        font-size: 13px;
+        padding: 6px 12px;
+        margin-left: 0;
+    }
+
+    .days-grid {
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+        gap: 8px;
+    }
+
+    .row {
+        margin-left: -5px;
+        margin-right: -5px;
+    }
+
+    .col-md-2,
+    .col-md-3,
+    .col-md-4,
+    .col-md-8 {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+}
+
+@media (max-width: 576px) {
+    fieldset {
+        padding: 12px;
+        margin-bottom: 15px;
+    }
+
+    fieldset > legend {
+        font-size: 12px;
+        padding: 5px 10px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .days-grid {
+        grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+        gap: 6px;
+    }
+
+    .days-grid .checkbox-inline {
+        font-size: 12px;
+        padding: 6px 8px;
+    }
+}
+
+/* ========== ANIMAÇÕES ========== */
+.table tbody tr {
+    animation: slideIn 0.3s ease-in-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

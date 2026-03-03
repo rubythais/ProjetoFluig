@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Sugestão de Melhorias</title>
+	<style>
+		* { margin: 0; padding: 0; box-sizing: border-box; }
+		html { width: 100%; height: 100%; }
+		body {
+			font-family: Arial, sans-serif;
+			background-color: white;
+			width: 100%;
+			padding: 0;
+			margin: 0;
+		}
+		.fluig-style-guide {
+			width: 100% !important;
+			max-width: none !important;
+			margin: 0 !important;
+			padding: 30px !important;
+			background: white;
+			border-radius: 0;
+			box-shadow: none;
+		}
+		.panel {
+			border: 1px solid #ddd;
+			border-radius: 4px;
+			margin-bottom: 20px;
+		}
+		.panel-heading {
+			padding: 15px;
+			border-radius: 4px 4px 0 0;
+		}
+		.panel-info .panel-heading {
+			background-color: #5bc0de;
+			color: white;
+			border-bottom: 2px solid #46b8da;
+		}
+		.panel-warning .panel-heading {
+			background-color: #f0ad4e;
+			color: white;
+			border-bottom: 2px solid #eea236;
+		}
+		.panel-body {
+			padding: 20px;
+		}
+		.panel-title {
+			font-size: 18px;
+			font-weight: bold;
+			margin: 0;
+		}
+		.row {
+			display: flex;
+			flex-wrap: wrap;
+			margin: -10px;
+		}
+		.col-md-6, .col-md-12 {
+			padding: 10px;
+		}
+		.col-md-6 {
+			width: 50%;
+		}
+		.col-md-12 {
+			width: 100%;
+		}
+		.form-group {
+			margin-bottom: 15px;
+		}
+		.form-group label {
+			display: block;
+			font-weight: 600;
+			margin-bottom: 5px;
+			color: #333;
+		}
+		.form-group label .required {
+			color: #d9534f;
+			margin-left: 3px;
+		}
+		.form-control {
+			width: 100%;
+			padding: 10px;
+			border: 1px solid #ccc;
+			border-radius: 4px;
+			font-size: 14px;
+			font-family: Arial, sans-serif;
+		}
+		.form-control:focus {
+			outline: none;
+			border-color: #66afe9;
+			box-shadow: 0 0 8px rgba(102, 175, 233, 0.6);
+		}
+		.form-control[readonly] {
+			background-color: #f5f5f5;
+			cursor: not-allowed;
+		}
+		textarea.form-control {
+			resize: vertical;
+			min-height: 100px;
+		}
+		@media (max-width: 768px) {
+			.col-md-6 {
+				width: 100%;
+			}
+		}
+	</style>
+</head>
+<body>
+
+<form name="sugestao" id="sugestao" role="form">
+	<div class="fluig-style-guide">
+
+		<!-- PAINEL 1: Dados da Sugestão -->
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h3 class="panel-title">Dados da Sugestão</h3>
+			</div>
+			<div class="panel-body">
+
+				<!-- Linha 1: Título e Tipo -->
+				<div class="row">
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="sugestao_titulo">Título da Sugestão <span class="required">*</span></label>
+							<input type="text" id="sugestao_titulo" name="sugestao_titulo" 
+								class="form-control" placeholder="Ex: Melhorar performance do relatório X" required>
+						</div>
+					</div>
+
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="sugestao_tipo">Tipo <span class="required">*</span></label>
+							<select id="sugestao_tipo" name="sugestao_tipo" class="form-control" required>
+								<option value="">Selecione</option>
+								<option value="melhoria">Melhoria</option>
+								<option value="nova_funcionalidade">Nova Funcionalidade</option>
+								<option value="correcao">Correção</option>
+							</select>
+						</div>
+					</div>
+				</div>
+
+				<!-- Linha 2: Módulo e Impacto -->
+				<div class="row">
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="sugestao_modulo">Módulo/Área Afetada <span class="required">*</span></label>
+							<input type="text" id="sugestao_modulo" name="sugestao_modulo" 
+								class="form-control" placeholder="Ex: Relatórios, Dashboard, Login" required>
+						</div>
+					</div>
+
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="sugestao_impacto">Impacto Esperado</label>
+							<select id="sugestao_impacto" name="sugestao_impacto" class="form-control">
+								<option value="">Selecione</option>
+								<option value="baixo">Baixo</option>
+								<option value="medio">Médio</option>
+								<option value="alto">Alto</option>
+							</select>
+						</div>
+					</div>
+				</div>
+
+				<!-- Linha 3: Descrição Detalhada -->
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<label for="sugestao_descricao">Descrição Detalhada <span class="required">*</span></label>
+							<textarea id="sugestao_descricao" name="sugestao_descricao" 
+								class="form-control" placeholder="Descreva a sugestão em detalhes..." required></textarea>
+						</div>
+					</div>
+				</div>
+
+				<!-- Linha 4: Nome do Solicitante -->
+				<div class="row">
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="sugestao_solicitante">Nome do Solicitante</label>
+							<input type="text" id="sugestao_solicitante" name="sugestao_solicitante" 
+								class="form-control" readonly>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+		<!-- PAINEL 2: Análise e Revisão -->
+		<div class="panel panel-warning">
+			<div class="panel-heading">
+				<h3 class="panel-title">Análise e Revisão</h3>
+			</div>
+			<div class="panel-body">
+
+				<!-- Linha 1: Status e Prioridade -->
+				<div class="row">
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="sugestao_status">Status</label>
+							<select id="sugestao_status" name="sugestao_status" class="form-control">
+								<option value="">Selecione</option>
+								<option value="em_triagem">Em Triagem</option>
+								<option value="em_revisao">Em Revisão</option>
+								<option value="aprovado">Aprovado</option>
+								<option value="backlog">Backlog</option>
+								<option value="reprovado">Reprovado</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="sugestao_prioridade">Prioridade</label>
+							<select id="sugestao_prioridade" name="sugestao_prioridade" class="form-control">
+								<option value="">Selecione</option>
+								<option value="p0">P0 - Crítica</option>
+								<option value="p1">P1 - Alta</option>
+								<option value="p2">P2 - Média</option>
+								<option value="p3">P3 - Baixa</option>
+							</select>
+						</div>
+					</div>
+				</div>
+
+				<!-- Linha 2: Área Responsável -->
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<label for="sugestao_area_responsavel">Área Responsável</label>
+							<input type="text" id="sugestao_area_responsavel" name="sugestao_area_responsavel" 
+								class="form-control" placeholder="Ex: Desenvolvimento, Infraestrutura, UX">
+						</div>
+					</div>
+				</div>
+
+				<!-- Linha 3: Justificativa da Decisão -->
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<label for="sugestao_justificativa">Justificativa da Decisão</label>
+							<textarea id="sugestao_justificativa" name="sugestao_justificativa" 
+								class="form-control" placeholder="Justifique a aprovação/reprovação ou encaminhamento..."></textarea>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+	</div>
+</form>
+
+</body>
+</html>

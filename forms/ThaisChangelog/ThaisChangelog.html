@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>CHANGELOG - Gestão de Versões e Mudanças</title>
+	<link rel="stylesheet" href="styles.css">
+	<style>
+		* { margin: 0; padding: 0; box-sizing: border-box; }
+		html { width: 100%; height: 100%; margin: 0; padding: 0; }
+		body { 
+			width: 100%; 
+			height: 100%; 
+			margin: 0; 
+			padding: 0;
+			display: block;
+		}
+		form {
+			display: block;
+			width: 100%;
+			margin: 0;
+			padding: 0;
+		}
+		.fluig-style-guide {
+			width: 100% !important;
+			max-width: none !important;
+			min-width: 100% !important;
+			margin: 0 !important;
+			padding: 30px !important;
+			background: white;
+			border-radius: 0;
+			box-shadow: none;
+			display: block;
+		}
+		.panel {
+			border: 1px solid #ddd;
+			margin-bottom: 20px;
+			border-radius: 4px;
+		}
+		.panel-header {
+			background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+			color: white;
+			padding: 15px 20px;
+			font-weight: bold;
+			font-size: 16px;
+			border-bottom: 2px solid #E65100;
+			border-radius: 4px 4px 0 0;
+		}
+		.panel-header i {
+			margin-right: 8px;
+		}
+		.panel-body {
+			padding: 25px;
+			background: #fafafa;
+		}
+		.row {
+			display: flex;
+			flex-wrap: wrap;
+			margin: -15px;
+		}
+		.col-md-4, .col-md-6, .col-md-12 {
+			padding: 15px;
+		}
+		.col-md-4 { width: calc(33.333% - 30px); }
+		.col-md-6 { width: calc(50% - 30px); }
+		.col-md-12 { width: calc(100% - 30px); }
+		.form-group {
+			margin-bottom: 18px;
+		}
+		.form-group label {
+			display: block;
+			margin-bottom: 6px;
+			font-weight: 600;
+			color: #333;
+			font-size: 14px;
+		}
+		.form-group label .required {
+			color: #e74c3c;
+			margin-left: 4px;
+			font-weight: bold;
+		}
+		.form-control {
+			width: 100%;
+			padding: 10px 12px;
+			border: 2px solid #ddd;
+			border-radius: 4px;
+			font-size: 14px;
+			font-family: Arial, sans-serif;
+			transition: border-color 0.3s, box-shadow 0.3s;
+		}
+		.form-control:focus {
+			outline: none;
+			border-color: #FF9800;
+			box-shadow: 0 0 8px rgba(255, 152, 0, 0.3);
+		}
+		.form-control[required] {
+			border-left: 4px solid #e74c3c;
+		}
+		.form-control.error {
+			border: 2px solid #e74c3c !important;
+			background-color: #fed7d7;
+		}
+		.form-control.error:focus {
+			box-shadow: 0 0 8px rgba(231, 76, 60, 0.5);
+		}
+		small {
+			display: block;
+			margin-top: 5px;
+			font-size: 12px;
+		}
+		.btn {
+			padding: 10px 16px;
+			border: none;
+			border-radius: 4px;
+			cursor: pointer;
+			font-weight: 600;
+			transition: all 0.3s;
+		}
+		.btn-default {
+			background: #95a5a6;
+			color: white;
+		}
+		.btn-default:hover {
+			background: #7f8c8d;
+		}
+		.btn-primary {
+			background: #FF9800;
+			color: white;
+		}
+		.btn-primary:hover {
+			background: #F57C00;
+		}
+		.btn-danger {
+			background: #e74c3c;
+			color: white;
+		}
+		.btn-danger:hover {
+			background: #c0392b;
+		}
+		.btn-xs {
+			padding: 5px 8px;
+			font-size: 12px;
+		}
+		table {
+			width: 100%;
+			border-collapse: collapse;
+		}
+		table thead tr {
+			background: #fff3e0;
+			border-bottom: 2px solid #FF9800;
+		}
+		table th {
+			padding: 12px;
+			text-align: left;
+			font-weight: bold;
+			color: #333;
+		}
+		table tbody tr {
+			border-bottom: 1px solid #ddd;
+		}
+		table tbody tr:hover {
+			background: #f5f5f5;
+		}
+		table td {
+			padding: 10px;
+		}
+	</style>
+</head>
+<body>
+
+<form name="ThaisChangelog" id="ThaisChangelog" role="form">
+	<div class="fluig-style-guide">
+
+		<!-- PAINEL 1: Informações do Versionamento -->
+		<div class="panel">
+			<div class="panel-header">
+				Informações do Versionamento
+			</div>
+			<div class="panel-body">
+
+				<!-- ROW 1: Status, Data e Versão -->
+				<div class="row">
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="changelog_status">Status <span class="required">*</span></label>
+							<select id="changelog_status" name="changelog_status" class="form-control" required>
+								<option value="">Selecione</option>
+								<option value="rascunho">Rascunho</option>
+								<option value="publicado">Publicado</option>
+								<option value="arquivado">Arquivado</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="changelog_release_date">Data de Publicação <span class="required">*</span></label>
+							<input type="date" id="changelog_release_date" name="changelog_release_date" class="form-control" required>
+						</div>
+					</div>
+
+					<div class="col-md-4">
+						<div class="form-group">
+							<label for="changelog_version">Versão <span class="required">*</span></label>
+							<input type="text" id="changelog_version" name="changelog_version" class="form-control" 
+								placeholder="Ex: 1.0.0" required>
+							<small style="color: #666;">Formato: 1.0.0</small>
+						</div>
+					</div>
+				</div>
+
+				<!-- ROW 2: Descrição Curta -->
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<label for="changelog_description_short">Descrição Curta <span class="required">*</span></label>
+							<input type="text" id="changelog_description_short" name="changelog_description_short" class="form-control"
+								placeholder="Breve resumo da versão" maxlength="150" required>
+							<small style="color: #666;">Máximo 150 caracteres</small>
+						</div>
+					</div>
+				</div>
+
+				<!-- ROW 3: Imagem/Banner e Categoria -->
+				<div class="row">
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="changelog_image">Imagem/Banner da Versão</label>
+							<input type="text" id="changelog_image" name="changelog_image" class="form-control"
+								placeholder="/change-log/v1.0.0.png ou ID do anexo">
+							<small style="color: #666;">URL ou caminho do anexo</small>
+						</div>
+					</div>
+
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="changelog_category">Categoria</label>
+							<select id="changelog_category" name="changelog_category" class="form-control">
+								<option value="">Selecione</option>
+								<option value="novidades">Novidades</option>
+								<option value="correcoes">Correções</option>
+								<option value="melhorias">Melhorias</option>
+								<option value="seguranca">Segurança</option>
+								<option value="manutencao">Manutenção</option>
+							</select>
+						</div>
+					</div>
+				</div>
+
+				<!-- ROW 4: Descrição Detalhada -->
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<label for="changelog_description">Descrição Detalhada</label>
+							<textarea id="changelog_description" name="changelog_description" class="form-control" 
+								placeholder="Descrição completa das mudanças nesta versão..." 
+								rows="4" maxlength="1000"></textarea>
+							<small style="color: #666;">Máximo 1000 caracteres</small>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+		<!-- PAINEL 2: Itens de Mudança (Pai-Filho) -->
+		<div class="panel">
+			<div class="panel-header">
+				Itens de Mudança
+			</div>
+			<div class="panel-body">
+
+				<button type="button" class="btn btn-default" onclick="wdkAddChild('tb_mudancas')">
+					Adicionar Novo
+				</button>
+
+				<table tablename="tb_mudancas" class="table table-striped" style="margin-top: 15px; width: 100%;">
+					<thead>
+						<tr>
+							<th width="15%">Tipo</th>
+							<th width="25%">Título</th>
+							<th width="30%">Detalhes</th>
+							<th width="15%">Impacto</th>
+							<th width="10%">Módulo</th>
+							<th width="5%">Ação</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<!-- Tipo -->
+							<td>
+								<select name="mudanca_tipo" class="form-control">
+									<option value="">Selecione</option>
+									<option value="novidade">Novidade</option>
+									<option value="melhoria">Melhoria</option>
+									<option value="correcao">Correção</option>
+									<option value="seguranca">Segurança</option>
+								</select>
+							</td>
+
+							<!-- Título -->
+							<td>
+								<input type="text" name="mudanca_titulo" class="form-control" 
+									placeholder="Título da mudança">
+							</td>
+
+							<!-- Detalhes -->
+							<td>
+								<input type="text" name="mudanca_detalhes" class="form-control" 
+									placeholder="Detalhes adicionais">
+							</td>
+
+							<!-- Impacto -->
+							<td>
+								<select name="mudanca_impacto" class="form-control">
+									<option value="">-</option>
+									<option value="baixo">Baixo</option>
+									<option value="medio">Médio</option>
+									<option value="alto">Alto</option>
+								</select>
+							</td>
+
+							<!-- Módulo -->
+							<td>
+								<input type="text" name="mudanca_modulo" class="form-control" 
+									placeholder="Ex: Auth, API">
+							</td>
+
+							<!-- Ação: Remover -->
+							<td>
+								<button type="button" class="btn btn-xs btn-danger" onclick="fnWdkRemoveChild(this)">
+									X
+								</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+
+			</div>
+		</div>
+
+	</div>
+</form>
+
+</body>
+</html>
