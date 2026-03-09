@@ -17,6 +17,7 @@
 
             <select class="mw-select" v-model="category">
               <option value="">Categoria (todas)</option>
+              <option v-if="allCategories.length === 0" disabled>Sem categorias disponíveis</option>
               <option v-for="c in allCategories" :key="c" :value="c">
                 {{ c }}
               </option>
@@ -24,6 +25,7 @@
 
             <select class="mw-select" v-model="tag">
               <option value="">Tag (todas)</option>
+              <option v-if="allTags.length === 0" disabled>Sem tags disponíveis</option>
               <option v-for="t in allTags" :key="t" :value="t">
                 {{ t }}
               </option>
@@ -61,7 +63,7 @@ import { fetchChangelogVersions } from './services/changelogService'
 
 const props = defineProps({
   datasetName: { type: String, default: 'dsThaisChangelog' },
-  statusPublico: { type: String, default: 'ativo' },
+  statusPublico: { type: String, default: 'publicado' },
   title: { type: String, default: 'Changelog' }
 })
 
@@ -80,7 +82,7 @@ function toArray(value) {
   if (value == null) return []
   if (typeof value === 'string') {
     return value
-      .split(',')
+      .split(/[,;]+/)
       .map(s => s.trim())
       .filter(Boolean)
   }
@@ -99,17 +101,29 @@ function safeDate(d) {
 const allCategories = computed(() => {
   const set = new Set()
   versions.value.forEach(v => {
-    toArray(v.categories).forEach(c => set.add(c))
+    const cats = toArray(v.categories)
+    if (cats.length > 0) {
+      console.log('[App] Categorias encontradas:', cats, 'de versão', v.version)
+    }
+    cats.forEach(c => set.add(c))
   })
-  return Array.from(set).sort((a, b) => a.localeCompare(b, 'pt-BR'))
+  const result = Array.from(set).sort((a, b) => a.localeCompare(b, 'pt-BR'))
+  console.log('[App] Total de categorias únicas:', result)
+  return result
 })
 
 const allTags = computed(() => {
   const set = new Set()
   versions.value.forEach(v => {
-    toArray(v.tags).forEach(t => set.add(t))
+    const tags = toArray(v.tags)
+    if (tags.length > 0) {
+      console.log('[App] Tags encontradas:', tags, 'de versão', v.version)
+    }
+    tags.forEach(t => set.add(t))
   })
-  return Array.from(set).sort((a, b) => a.localeCompare(b, 'pt-BR'))
+  const result = Array.from(set).sort((a, b) => a.localeCompare(b, 'pt-BR'))
+  console.log('[App] Total de tags únicas:', result)
+  return result
 })
 
 const filtered = computed(() => {
@@ -164,6 +178,8 @@ onMounted(async () => {
   try {
     const data = await fetchChangelogVersions({ datasetName: props.datasetName })
     versions.value = Array.isArray(data) ? data : []
+    console.log('[App] Versões carregadas:', versions.value.length)
+    console.log('[App] Dados completos:', JSON.stringify(versions.value, null, 2))
   } catch (e) {
     console.error(e)
     error.value =
@@ -217,10 +233,13 @@ onMounted(async () => {
 }
 
 .mw-title {
-  font-size: 28px;
+  font-size: clamp(24px, 4vw, 32px);
   font-weight: 700;
-  margin-bottom: 16px;
+  line-height: 1.2;
+  margin: 0 0 16px;
+  padding: 2px 0 4px;
   text-align: center;
+  display: block;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;

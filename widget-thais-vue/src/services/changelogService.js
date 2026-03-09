@@ -14,11 +14,12 @@ export async function fetchChangelogVersions(params) {
     {
       version: '2.4.1',
       releaseDate: '2026-02-20',
-      status: 'ativo',
+      status: 'publicado',
       summary: 'Melhorias no login e correções no relatório',
       categories: 'Melhorias;Correções',
       tags: 'Portal;Financeiro',
       pinned: 'true',
+      imageRef: '',
       imageDocumentId: '',
       changesJson: JSON.stringify([
         { type: 'melhoria', title: 'Login mais rápido', details: 'Otimizamos validações', impact: 'médio', module: 'Portal' },
@@ -28,11 +29,12 @@ export async function fetchChangelogVersions(params) {
     {
       version: '2.4.0',
       releaseDate: '2026-02-10',
-      status: 'ativo',
+      status: 'publicado',
       summary: 'Novas telas no portal',
       categories: 'Novidades',
       tags: 'Portal',
       pinned: 'false',
+      imageRef: '',
       imageDocumentId: '',
       changesJson: JSON.stringify([
         { type: 'novidade', title: 'Nova página inicial', details: '', impact: 'baixo', module: 'Portal' }
@@ -40,10 +42,7 @@ export async function fetchChangelogVersions(params) {
     }
   ];
 
-  if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
-    return normalizeRows(mock);
-  }
-
+  // Sempre tentar o dataset primeiro
   try {
     var resp = await fetch('/api/public/ecm/dataset/datasets', {
       method: 'POST',
@@ -64,17 +63,37 @@ export async function fetchChangelogVersions(params) {
         ? data.content.values
         : [];
 
-    return normalizeRows(rows);
+    var normalized = normalizeRows(rows);
+    
+    // Se dataset vazio, usar mock
+    if (normalized.length === 0) {
+      console.warn('[changelogService] Dataset vazio, usando dados mock');
+      return normalizeRows(mock);
+    }
+    
+    console.log('[changelogService] Dados do dataset carregados:', normalized.length, 'versões');
+    return normalized;
   } catch (e) {
-    console.error('Falha ao buscar dataset no Fluig. Usando mock.', e);
+    console.error('[changelogService] Falha ao buscar dataset. Usando mock.', e);
     return normalizeRows(mock);
   }
 }
 
 function normalizeRows(rows) {
-  return (rows || []).map(function (r) {
-    var categories = splitList(r.categories);
-    var tags = splitList(r.tags);
+  var normalized = (rows || []).map(function (r) {
+    var categories = splitList(
+      r.categories ||
+      r.category ||
+      r.changelog_category ||
+      r.categorias
+    );
+
+    var tags = splitList(
+      r.tags ||
+      r.tag ||
+      r.changelog_tags ||
+      r.etiquetas
+    );
 
     var pinned = String(r.pinned).toLowerCase() === 'true';
 
@@ -83,17 +102,45 @@ function normalizeRows(rows) {
       : safeJsonParse(r.changesJson || '[]', []);
 
     return {
-      version: r.version,
-      releaseDate: r.releaseDate,
-      status: r.status,
-      summary: r.summary,
+      version: r.version || r.changelog_version || '',
+      releaseDate: r.releaseDate || r.changelog_release_date || '',
+      status: r.status || r.changelog_status || '',
+      summary: r.summary || r.changelog_description_short || '',
       description: r.description || '',
       categories: categories,
       tags: tags,
       pinned: pinned,
-      imageDocumentId: r.imageDocumentId || '',
-      changes: changes
+      imageRef: r.imageRef || r.image || r.changelog_image || '',
+      imageDocumentId: r.imageDocumentId || r.imageDocId || '',
+      changes: changes,
+      createdBy: r.createdBy || '',
+      createdAt: r.createdAt || r.createDate || '',
+      updatedAt: r.updatedAt || r.updateDate || '',
+      publishedBy: r.publishedBy || '',
+      publishedAt: r.publishedAt || ''
     };
+  });
+
+  var byVersion = {};
+  normalized.forEach(function (item) {
+    var key = String(item.version || '').trim();
+    if (!key) return;
+
+    var current = byVersion[key];
+    if (!current) {
+      byVersion[key] = item;
+      return;
+    }
+
+    var currentDate = new Date(current.updatedAt || current.releaseDate || 0).getTime();
+    var nextDate = new Date(item.updatedAt || item.releaseDate || 0).getTime();
+    if (nextDate >= currentDate) {
+      byVersion[key] = item;
+    }
+  });
+
+  return Object.keys(byVersion).map(function (version) {
+    return byVersion[version];
   });
 }
 

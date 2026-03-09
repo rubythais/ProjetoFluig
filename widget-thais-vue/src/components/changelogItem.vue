@@ -17,9 +17,20 @@
     </button>
 
     <div v-if="open" class="body">
-      <div class="badges">
-        <span v-for="c in item.categories" :key="c" class="badge">{{ c }}</span>
-        <span v-for="t in item.tags" :key="t" class="tag">{{ t }}</span>
+      <div v-if="categoryList.length || tagList.length" class="badges-wrap">
+        <div v-if="categoryList.length" class="badges-group">
+          <span class="badges-label">Categorias</span>
+          <div class="badges">
+            <span v-for="c in categoryList" :key="c" class="badge">{{ c }}</span>
+          </div>
+        </div>
+
+        <div v-if="tagList.length" class="badges-group">
+          <span class="badges-label">Tags</span>
+          <div class="badges">
+            <span v-for="t in tagList" :key="t" class="tag">{{ t }}</span>
+          </div>
+        </div>
       </div>
 
       <div v-if="imageUrl" class="banner">
@@ -55,6 +66,15 @@ const props = defineProps({
 
 const open = ref(false)
 
+function toArray(value) {
+  if (Array.isArray(value)) return value
+  if (value == null) return []
+  return String(value)
+    .split(/[,;]+/)
+    .map(item => item.trim())
+    .filter(Boolean)
+}
+
 function formatDate(iso) {
   if (!iso) return ''
   try {
@@ -67,9 +87,18 @@ function formatDate(iso) {
 
 
 const imageUrl = computed(() => {
-  if (!props.item.imageDocumentId) return ''
-  return `/ecm/document/downloadURL/${props.item.imageDocumentId}`
+  if (props.item.imageRef) return props.item.imageRef
+  if (props.item.imageDocumentId) return `/ecm/document/downloadURL/${props.item.imageDocumentId}`
+
+  const rawVersion = String(props.item.version || '').trim()
+  if (!rawVersion) return ''
+
+  const normalizedVersion = rawVersion.startsWith('v') ? rawVersion : `v${rawVersion}`
+  return `/changelog-images/${normalizedVersion}.png`
 })
+
+const categoryList = computed(() => toArray(props.item.categories))
+const tagList = computed(() => toArray(props.item.tags))
 
 const detailsHref = computed(() => {
   if (!props.showDetailsLink) return ''
@@ -158,11 +187,32 @@ const detailsHref = computed(() => {
   border-top: 1px solid #f1f5f9;
 }
 
+.badges-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.badges-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.badges-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+  min-width: 74px;
+}
+
 .badges {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-  margin-bottom: 16px;
+  margin-bottom: 0;
 }
 
 .badge {
