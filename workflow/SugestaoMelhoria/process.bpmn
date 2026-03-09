@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" 
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" 
+             xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC"
+             xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:fluig="http://www.totvs.com/bpm"
+             id="SugestaoMelhoria" 
+             name="Sugestão de Melhoria"
+             targetNamespace="http://www.totvs.com/bpm">
+    
+    <process id="SugestaoMelhoria_process" name="Processo de Sugestão de Melhoria" isExecutable="true">
+        
+        <documentation>
+            Processo para gerenciar sugestões de melhorias submetidas pelos usuários.
+            Fluxo: Submissão -> Triagem -> Aprovação/Rejeição -> Implementação (se aprovado)
+        </documentation>
+        
+        <!-- Variáveis do Processo -->
+        <property id="decisao_aprovacao" name="decisao_aprovacao"/>
+        <property id="justificativa_decisao" name="justificativa_decisao"/>
+        <property id="area_responsavel" name="area_responsavel"/>
+        <property id="prioridade" name="prioridade"/>
+        
+        <!-- Start Event -->
+        <startEvent id="StartEvent_1" name="Início">
+            <outgoing>Flow_1</outgoing>
+        </startEvent>
+        
+        <!-- Task 1: Submeter Sugestão -->
+        <userTask id="Task_SubmeterSugestao" name="Submeter Sugestão">
+            <extensionElements>
+                <fluig:properties>
+                    <fluig:formName>Sugestao_Melhorias</fluig:formName>
+                    <fluig:assignType>REQUESTER</fluig:assignType>
+                    <fluig:deadlineType>CUSTOM</fluig:deadlineType>
+                    <fluig:deadlineTime>24</fluig:deadlineTime>
+                    <fluig:notifyAfterDeadline>true</fluig:notifyAfterDeadline>
+                </fluig:properties>
+                <fluig:listeners>
+                    <fluig:taskListener event="complete" class="com.totvs.fluig.listeners.OnTaskComplete">
+                        <fluig:script>
+                            // Após submissão, atualizar status no dataset
+                            var status = getValue("WKCompletTask") ? "em_triagem" : "rascunho";
+                            hAPI.setCardValue("sugestao_status", status);
+                            log.info("Sugestão submetida com status: " + status);
+                        </fluig:script>
+                    </fluig:taskListener>
+                </fluig:listeners>
+            </extensionElements>
+            <incoming>Flow_1</incoming>
+            <outgoing>Flow_2</outgoing>
+        </userTask>
+        
+        <!-- Task 2: Revisar Sugestão -->
+        <userTask id="Task_RevisarSugestao" name="Revisar Sugestão">
+            <extensionElements>
+                <fluig:properties>
+                    <fluig:formName>Sugestao_Melhorias</fluig:formName>
+                    <fluig:assignType>POOL_ROLE</fluig:assignType>
+                    <fluig:poolRole>Gestor</fluig:poolRole>
+                    <fluig:deadlineType>CUSTOM</fluig:deadlineType>
+                    <fluig:deadlineTime>48</fluig:deadlineTime>
+                    <fluig:notifyAfterDeadline>true</fluig:notifyAfterDeadline>
+                </fluig:properties>
+                <fluig:listeners>
+                    <fluig:taskListener event="assignment" class="com.totvs.fluig.listeners.OnTaskAssignment">
+                        <fluig:script>
+                            // Notificar revisor por email
+                            hAPI.setCardValue("sugestao_status", "em_revisao");
+                            log.info("Sugestão em revisão");
+                        </fluig:script>
+                    </fluig:taskListener>
+                    <fluig:taskListener event="complete" class="com.totvs.fluig.listeners.OnTaskComplete">
+                        <fluig:script>
+                            // Capturar decisão do revisor
+                            var decisao = getValue("sugestao_status"); // aprovado ou reprovado
+                            hAPI.setProcessTaskVar("decisao_aprovacao", decisao);
+                            hAPI.setProcessTaskVar("justificativa_decisao", getValue("sugestao_justificativa"));
+                            log.info("Decisão capturada: " + decisao);
+                        </fluig:script>
+                    </fluig:taskListener>
+                </fluig:listeners>
+            </extensionElements>
+            <incoming>Flow_2</incoming>
+            <outgoing>Flow_3</outgoing>
+        </userTask>
+        
+        <!-- Exclusive Gateway: Decisão de Aprovação -->
+        <exclusiveGateway id="Gateway_Aprovacao" name="Sugestão Aprovada?">
+            <incoming>Flow_3</incoming>
+            <outgoing>Flow_Sim</outgoing>
+            <outgoing>Flow_Nao</outgoing>
+        </exclusiveGateway>
+        
+        <!-- Task 3: Implementar Sugestão (só se aprovado) -->
+        <userTask id="Task_Implementar" name="Implementar Sugestão">
+            <extensionElements>
+                <fluig:properties>
+                    <fluig:formName>Sugestao_Melhorias</fluig:formName>
+                    <fluig:assignType>POOL_ROLE</fluig:assignType>
+                    <fluig:poolRole>Desenvolvimento</fluig:poolRole>
+                    <fluig:deadlineType>CUSTOM</fluig:deadlineType>
+                    <fluig:deadlineTime>240</fluig:deadlineTime>
+                </fluig:properties>
+                <fluig:listeners>
+                    <fluig:taskListener event="complete" class="com.totvs.fluig.listeners.OnTaskComplete">
+                        <fluig:script>
+                            // Atualizar status para finalizado
+                            hAPI.setCardValue("sugestao_status", "finalizado");
+                            log.info("Sugestão implementada");
+                        </fluig:script>
+                    </fluig:taskListener>
+                </fluig:listeners>
+            </extensionElements>
+            <incoming>Flow_Sim</incoming>
+            <outgoing>Flow_5</outgoing>
+        </userTask>
+        
+        <!-- End Event: Aprovado -->
+        <endEvent id="EndEvent_Aprovado" name="Sugestão Implementada">
+            <extensionElements>
+                <fluig:listeners>
+                    <fluig:executionListener event="end">
+                        <fluig:script>
+                            log.info("Processo finalizado: Sugestão implementada com sucesso");
+                        </fluig:script>
+                    </fluig:executionListener>
+                </fluig:listeners>
+            </extensionElements>
+            <incoming>Flow_5</incoming>
+        </endEvent>
+        
+        <!-- End Event: Rejeitado -->
+        <endEvent id="EndEvent_Rejeitado" name="Sugestão Rejeitada">
+            <extensionElements>
+                <fluig:listeners>
+                    <fluig:executionListener event="end">
+                        <fluig:script>
+                            hAPI.setCardValue("sugestao_status", "reprovado");
+                            log.info("Processo finalizado: Sugestão rejeitada");
+                        </fluig:script>
+                    </fluig:executionListener>
+                </fluig:listeners>
+            </extensionElements>
+            <incoming>Flow_Nao</incoming>
+        </endEvent>
+        
+        <!-- Sequence Flows -->
+        <sequenceFlow id="Flow_1" sourceRef="StartEvent_1" targetRef="Task_SubmeterSugestao"/>
+        
+        <sequenceFlow id="Flow_2" sourceRef="Task_SubmeterSugestao" targetRef="Task_RevisarSugestao"/>
+        
+        <sequenceFlow id="Flow_3" sourceRef="Task_RevisarSugestao" targetRef="Gateway_Aprovacao"/>
+        
+        <!-- Fluxo SIM: Sugestão aprovada -->
+        <sequenceFlow id="Flow_Sim" sourceRef="Gateway_Aprovacao" targetRef="Task_Implementar" name="Aprovado">
+            <conditionExpression xsi:type="tFormalExpression">
+                <![CDATA[${decisao_aprovacao == 'aprovado'}]]>
+            </conditionExpression>
+        </sequenceFlow>
+        
+        <!-- Fluxo NÃO: Sugestão rejeitada (default) -->
+        <sequenceFlow id="Flow_Nao" sourceRef="Gateway_Aprovacao" targetRef="EndEvent_Rejeitado" name="Reprovado">
+            <conditionExpression xsi:type="tFormalExpression">
+                <![CDATA[${decisao_aprovacao != 'aprovado'}]]>
+            </conditionExpression>
+        </sequenceFlow>
+        
+        <sequenceFlow id="Flow_5" sourceRef="Task_Implementar" targetRef="EndEvent_Aprovado"/>
+        
+    </process>
+    
+    <!-- Diagram (posicionamento visual dos elementos) -->
+    <bpmndi:BPMNDiagram id="SugestaoMelhoria_diagram">
+        <bpmndi:BPMNPlane id="SugestaoMelhoria_plane" bpmnElement="SugestaoMelhoria_process">
+            
+            <!-- Start Event -->
+            <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+                <omgdc:Bounds x="100" y="200" width="36" height="36"/>
+            </bpmndi:BPMNShape>
+            
+            <!-- Task: Submeter -->
+            <bpmndi:BPMNShape id="Task_SubmeterSugestao_di" bpmnElement="Task_SubmeterSugestao">
+                <omgdc:Bounds x="200" y="178" width="100" height="80"/>
+            </bpmndi:BPMNShape>
+            
+            <!-- Task: Revisar -->
+            <bpmndi:BPMNShape id="Task_RevisarSugestao_di" bpmnElement="Task_RevisarSugestao">
+                <omgdc:Bounds x="360" y="178" width="100" height="80"/>
+            </bpmndi:BPMNShape>
+            
+            <!-- Gateway: Aprovação -->
+            <bpmndi:BPMNShape id="Gateway_Aprovacao_di" bpmnElement="Gateway_Aprovacao" isMarkerVisible="true">
+                <omgdc:Bounds x="520" y="193" width="50" height="50"/>
+            </bpmndi:BPMNShape>
+            
+            <!-- Task: Implementar -->
+            <bpmndi:BPMNShape id="Task_Implementar_di" bpmnElement="Task_Implementar">
+                <omgdc:Bounds x="640" y="178" width="100" height="80"/>
+            </bpmndi:BPMNShape>
+            
+            <!-- End: Aprovado -->
+            <bpmndi:BPMNShape id="EndEvent_Aprovado_di" bpmnElement="EndEvent_Aprovado">
+                <omgdc:Bounds x="800" y="200" width="36" height="36"/>
+            </bpmndi:BPMNShape>
+            
+            <!-- End: Rejeitado -->
+            <bpmndi:BPMNShape id="EndEvent_Rejeitado_di" bpmnElement="EndEvent_Rejeitado">
+                <omgdc:Bounds x="527" y="320" width="36" height="36"/>
+            </bpmndi:BPMNShape>
+            
+            <!-- Edges (Sequence Flows) -->
+            <bpmndi:BPMNEdge id="Flow_1_di" bpmnElement="Flow_1">
+                <omgdi:waypoint x="136" y="218"/>
+                <omgdi:waypoint x="200" y="218"/>
+            </bpmndi:BPMNEdge>
+            
+            <bpmndi:BPMNEdge id="Flow_2_di" bpmnElement="Flow_2">
+                <omgdi:waypoint x="300" y="218"/>
+                <omgdi:waypoint x="360" y="218"/>
+            </bpmndi:BPMNEdge>
+            
+            <bpmndi:BPMNEdge id="Flow_3_di" bpmnElement="Flow_3">
+                <omgdi:waypoint x="460" y="218"/>
+                <omgdi:waypoint x="520" y="218"/>
+            </bpmndi:BPMNEdge>
+            
+            <bpmndi:BPMNEdge id="Flow_Sim_di" bpmnElement="Flow_Sim">
+                <omgdi:waypoint x="570" y="218"/>
+                <omgdi:waypoint x="640" y="218"/>
+            </bpmndi:BPMNEdge>
+            
+            <bpmndi:BPMNEdge id="Flow_Nao_di" bpmnElement="Flow_Nao">
+                <omgdi:waypoint x="545" y="243"/>
+                <omgdi:waypoint x="545" y="320"/>
+            </bpmndi:BPMNEdge>
+            
+            <bpmndi:BPMNEdge id="Flow_5_di" bpmnElement="Flow_5">
+                <omgdi:waypoint x="740" y="218"/>
+                <omgdi:waypoint x="800" y="218"/>
+            </bpmndi:BPMNEdge>
+            
+        </bpmndi:BPMNPlane>
+    </bpmndi:BPMNDiagram>
+</definitions>

@@ -1,0 +1,22 @@
+.menu-main { display: none !important; }
+
+.wcm_widget { margin: 0 !important; padding: 0 !important; }
+
+nav.responsive-header-navbar.fs-bg-white { display: none; }
+div[appcode="responsive_header"] { display: none !important; }
+
+.wcm-all-content {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+div#wcm-content {
+  padding: 0 !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.wcm-wrapper-content {
+  width: 100vw !important;
+}

@@ -1,0 +1,21 @@
+{
+  "name": "widget-thais-vue",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "build-only": "vite build"
+  },
+  "dependencies": {
+    "vue": "^3.5.25"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.4",
+    "postcss-prefix-selector": "^2.1.1",
+    "vite": "^5.4.21",
+    "vite-plugin-vue-devtools": "^7.7.9"
+  }
+}

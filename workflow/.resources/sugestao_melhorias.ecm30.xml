@@ -28,7 +28,7 @@
     <processDefinitionVersionPK>
       <companyId>1</companyId>
       <processId>sugestao_melhorias</processId>
-      <version>1</version>
+      <version>2</version>
     </processDefinitionVersionPK>
     <versionDescription></versionDescription>
     <formId>0</formId>
@@ -273,7 +273,7 @@
       <width>801</width>
       <positionX>45</positionX>
       <positionY>255</positionY>
-      <stateName>Trij</stateName>
+      <stateName>Triagem</stateName>
       <type>2</type>
       <parentSequence>1</parentSequence>
       <swimLanePK>
@@ -315,6 +315,54 @@
         <sequence>5</sequence>
       </swimLanePK>
     </SwimLane>
+    <SwimLane>
+      <color>FFFFFF</color>
+      <height>290</height>
+      <width>430</width>
+      <positionX>2000</positionX>
+      <positionY>3020</positionY>
+      <stateName>Pool</stateName>
+      <type>1</type>
+      <parentSequence>0</parentSequence>
+      <swimLanePK>
+        <companyId>1</companyId>
+        <processId>sugestao_melhorias</processId>
+        <version>1</version>
+        <sequence>6</sequence>
+      </swimLanePK>
+    </SwimLane>
+    <SwimLane>
+      <color>FF7800</color>
+      <height>250</height>
+      <width>796</width>
+      <positionX>50</positionX>
+      <positionY>499</positionY>
+      <stateName>Revisor</stateName>
+      <type>2</type>
+      <parentSequence>1</parentSequence>
+      <swimLanePK>
+        <companyId>1</companyId>
+        <processId>sugestao_melhorias</processId>
+        <version>1</version>
+        <sequence>7</sequence>
+      </swimLanePK>
+    </SwimLane>
+    <SwimLane>
+      <color>adc9ac</color>
+      <height>380</height>
+      <width>795</width>
+      <positionX>50</positionX>
+      <positionY>748</positionY>
+      <stateName>Encerramento</stateName>
+      <type>2</type>
+      <parentSequence>0</parentSequence>
+      <swimLanePK>
+        <companyId>1</companyId>
+        <processId>sugestao_melhorias</processId>
+        <version>1</version>
+        <sequence>8</sequence>
+      </swimLanePK>
+    </SwimLane>
   </list>
   <list>
     <ProcessComponGraf>
@@ -347,7 +395,7 @@
       <processLinkBendPK>
         <companyId>1</companyId>
         <processId>sugestao_melhorias</processId>
-        <version>1</version>
+        <version>2</version>
         <linkSequence>6</linkSequence>
         <bendSequence>1</bendSequence>
       </processLinkBendPK>
@@ -358,7 +406,7 @@
       <processLinkBendPK>
         <companyId>1</companyId>
         <processId>sugestao_melhorias</processId>
-        <version>1</version>
+        <version>2</version>
         <linkSequence>8</linkSequence>
         <bendSequence>1</bendSequence>
       </processLinkBendPK>

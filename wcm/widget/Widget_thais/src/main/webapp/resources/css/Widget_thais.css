@@ -1,1 +1,92 @@
-/* Coloque aqui seu codigo CSS */
+.menu-main {
+	display: none !important;
+}
+
+.table th,
+.table td,
+.table-striped th,
+.table-striped td,
+.table-hover th,
+.table-hover td {
+	border: unset;
+	padding: 16px 20px;
+	color: gray;
+}
+
+.table th,
+.table-striped th,
+.table-hover th {
+	background: unset;
+}
+
+.wcm_widget {
+	margin: 0 !important;
+	margin-top: 0px !important;
+	padding: 0 !important;
+}
+
+nav.responsive-header-navbar.fs-bg-white {
+	display: none;
+}
+
+div[appcode="responsive_header"] {
+	display: none !important;
+}
+
+
+.wcm-all-content {
+	padding-top: 0 !important;
+	padding-bottom: 0 !important;
+	padding-left: 0 !important;
+	padding-right: 0 !important;
+	margin: 0 !important;
+}
+
+.wcm-all-content .wcm_widget {
+	-webkit-box-shadow: none !important;
+	box-shadow: none !important;
+}
+
+body,
+.wcm-all-content {
+	background-color: #fff !important;
+}
+
+div#wcm-content {
+	padding: 0 !important;
+	margin: 0 !important;
+	display: flex !important;
+	align-items: center !important;
+}
+
+.wcm-all-content>#wcm-content {
+	padding-top: 0 !important;
+	padding-bottom: 0 !important;
+	padding-left: 0 !important;
+	padding-right: 0 !important;
+}
+
+.wcm-wrapper-content {
+	width: 100vw !important;
+}
+
+.group:after,
+.group:before,
+.list-inline:after,
+.list-inline:before,
+.system-default-tabs:after,
+.system-default-tabs:before,
+.system-widget-header-options:after,
+.system-widget-header-options:before,
+.clearfix:after,
+.clearfix:before,
+.well:after,
+.well:before,
+.grid:after,
+.grid:before,
+.grid [class*="col-"]:after,
+.grid [class*="col-"]:before,
+.totvs-form:after,
+.totvs-form:before {
+	content: none !important;
+}

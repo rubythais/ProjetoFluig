@@ -1,0 +1,51 @@
+# Dependencies and Build artifacts
+node_modules/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+.mvn/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Eclipse
+bin/
+.metadata/
+RemoteSystemsTempFiles/
+
+# Build outputs
+dist/
+build/
+coverage/
+*.war
+*.jar
+*.zip
+
+# Vue/Vite specific
+.cache/
+.nuxt/
+.vite/
+
+# Temporary files
+temp/
+tmp/
+*.tmp
+
+# Compiled Vue assets (gerado pelo npm build)
+wcm/widget/Widget_thais/src/main/webapp/resources/js/app-vue/index.js
+wcm/widget/Widget_thais/src/main/webapp/resources/js/app-vue/index.css
