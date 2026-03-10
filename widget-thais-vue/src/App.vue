@@ -6,7 +6,12 @@
       <!-- card "de widget" contido -->
       <div class="mw-portal-card">
         <div class="mw-topbar">
-          <div class="mw-title">{{ titleText }}</div>
+          <div class="mw-title-row">
+            <div class="mw-title">{{ titleText }}</div>
+            <button class="btn-suggest" @click="showSuggestModal = true">
+              Sugerir Melhoria
+            </button>
+          </div>
 
           <div class="mw-controls">
             <input
@@ -53,12 +58,15 @@
         </div>
       </div>
     </div>
+
+    <SuggestModal v-model="showSuggestModal" />
   </div>
 </template>
 
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import ChangelogItem from './components/changelogItem.vue'
+import SuggestModal from './components/SuggestModal.vue'
 import { fetchChangelogVersions } from './services/changelogService'
 
 const props = defineProps({
@@ -74,6 +82,7 @@ const versions = ref([])
 const q = ref('')
 const category = ref('')
 const tag = ref('')
+const showSuggestModal = ref(false)
 
 const titleText = computed(() => props.title || 'Changelog')
 
@@ -232,11 +241,20 @@ onMounted(async () => {
   border-image-slice: 1;
 }
 
+.mw-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
 .mw-title {
   font-size: clamp(24px, 4vw, 32px);
   font-weight: 700;
   line-height: 1.2;
-  margin: 0 0 16px;
+  margin: 0;
   padding: 2px 0 4px;
   text-align: center;
   display: block;
@@ -245,6 +263,30 @@ onMounted(async () => {
   -webkit-text-fill-color: transparent;
   background-clip: text;
   letter-spacing: -0.5px;
+}
+
+.btn-suggest {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+  white-space: nowrap;
+}
+
+.btn-suggest:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  background: linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%);
+}
+
+.btn-suggest:active {
+  transform: translateY(0);
 }
 
 .mw-controls {

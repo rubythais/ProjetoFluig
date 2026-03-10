@@ -88,7 +88,7 @@ function formatDate(iso) {
 
 const imageUrl = computed(() => {
   if (props.item.imageRef) return props.item.imageRef
-  if (props.item.imageDocumentId) return `/ecm/document/downloadURL/${props.item.imageDocumentId}`
+  if (props.item.imageDocumentId) return `/api/public/ecm/document/downloadURL/${props.item.imageDocumentId}`
 
   const rawVersion = String(props.item.version || '').trim()
   if (!rawVersion) return ''

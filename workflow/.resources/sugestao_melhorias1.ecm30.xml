@@ -2,9 +2,9 @@
   <ProcessDefinition>
     <processDefinitionPK>
       <companyId>1</companyId>
-      <processId>sugestao_melhorias</processId>
+      <processId>sugestao_melhorias1</processId>
     </processDefinitionPK>
-    <processDescription>sugestao_melhorias</processDescription>
+    <processDescription>sugestao_melhorias1</processDescription>
     <instruction></instruction>
     <active>true</active>
     <publicProcess>false</publicProcess>
@@ -27,7 +27,7 @@
   <ProcessDefinitionVersion>
     <processDefinitionVersionPK>
       <companyId>1</companyId>
-      <processId>sugestao_melhorias</processId>
+      <processId>sugestao_melhorias1</processId>
       <version>1</version>
     </processDefinitionVersionPK>
     <versionDescription></versionDescription>
@@ -49,7 +49,7 @@
     <ProcessState>
       <processStatePK>
         <companyId>1</companyId>
-        <processId>sugestao_melhorias</processId>
+        <processId>sugestao_melhorias1</processId>
         <version>1</version>
         <sequence>4</sequence>
       </processStatePK>
@@ -75,8 +75,8 @@
       <notifyAuthorityFollowUp>false</notifyAuthorityFollowUp>
       <notifyRequisitionerFollowUp>false</notifyRequisitionerFollowUp>
       <automatic>false</automatic>
-      <positionX>140</positionX>
-      <positionY>120</positionY>
+      <positionX>150</positionX>
+      <positionY>82</positionY>
       <forecastedEffortType>0</forecastedEffortType>
       <forecastedEffort>0</forecastedEffort>
       <notifyManagerFollowUp>false</notifyManagerFollowUp>
@@ -99,12 +99,12 @@
     <ProcessState>
       <processStatePK>
         <companyId>1</companyId>
-        <processId>sugestao_melhorias</processId>
+        <processId>sugestao_melhorias1</processId>
         <version>1</version>
         <sequence>5</sequence>
       </processStatePK>
-      <stateName> ValidarSugestao</stateName>
-      <stateDescription> ValidarSugestao</stateDescription>
+      <stateName>Act1</stateName>
+      <stateDescription>Act1</stateDescription>
       <instruction></instruction>
       <deadlineTime>0</deadlineTime>
       <deadlineFieldName></deadlineFieldName>
@@ -124,8 +124,8 @@
       <notifyAuthorityFollowUp>true</notifyAuthorityFollowUp>
       <notifyRequisitionerFollowUp>false</notifyRequisitionerFollowUp>
       <automatic>false</automatic>
-      <positionX>440</positionX>
-      <positionY>290</positionY>
+      <positionX>260</positionX>
+      <positionY>208</positionY>
       <forecastedEffortType>0</forecastedEffortType>
       <forecastedEffort>0</forecastedEffort>
       <notifyManagerFollowUp>false</notifyManagerFollowUp>
@@ -146,60 +146,13 @@
       <digitalSignature>false</digitalSignature>
       <executionType>0</executionType>
     </ProcessState>
-    <ProcessState>
-      <processStatePK>
-        <companyId>1</companyId>
-        <processId>sugestao_melhorias</processId>
-        <version>1</version>
-        <sequence>11</sequence>
-      </processStatePK>
-      <stateName>Fim</stateName>
-      <stateDescription>Fim</stateDescription>
-      <instruction>Atividade final do processo</instruction>
-      <deadlineTime>0</deadlineTime>
-      <joint>false</joint>
-      <agreementPercentage>0</agreementPercentage>
-      <engineAllocationId></engineAllocationId>
-      <engineAllocationConfiguration></engineAllocationConfiguration>
-      <selectColleague>0</selectColleague>
-      <initialState>false</initialState>
-      <notifyAuthorityDelay>true</notifyAuthorityDelay>
-      <notifyRequisitionerDelay>false</notifyRequisitionerDelay>
-      <allowanceAuthorityTime>0</allowanceAuthorityTime>
-      <frequenceAuthorityTime>1</frequenceAuthorityTime>
-      <allowanceRequisitionerTime>0</allowanceRequisitionerTime>
-      <frequenceRequisitionerTime>0</frequenceRequisitionerTime>
-      <transferAttachments>false</transferAttachments>
-      <subProcessId></subProcessId>
-      <formFolder>0</formFolder>
-      <notifyAuthorityFollowUp>false</notifyAuthorityFollowUp>
-      <notifyRequisitionerFollowUp>false</notifyRequisitionerFollowUp>
-      <automatic>false</automatic>
-      <positionX>670</positionX>
-      <positionY>345</positionY>
-      <forecastedEffortType>0</forecastedEffortType>
-      <forecastedEffort>0</forecastedEffort>
-      <notifyManagerFollowUp>false</notifyManagerFollowUp>
-      <notifyManagerDelay>false</notifyManagerDelay>
-      <allowanceManagerTime>0</allowanceManagerTime>
-      <frequenceManagerTime>0</frequenceManagerTime>
-      <inhibitTransfer>false</inhibitTransfer>
-      <periodId></periodId>
-      <stateType>6</stateType>
-      <bpmnType>60</bpmnType>
-      <signalId>0</signalId>
-      <counterSign>false</counterSign>
-      <openInstances>0</openInstances>
-      <destinationStates/>
-      <digitalSignature>false</digitalSignature>
-    </ProcessState>
   </list>
   <list/>
   <list>
     <ProcessLink>
       <processLinkPK>
         <companyId>1</companyId>
-        <processId>sugestao_melhorias</processId>
+        <processId>sugestao_melhorias1</processId>
         <version>1</version>
         <linkSequence>6</linkSequence>
       </processLinkPK>
@@ -213,23 +166,6 @@
       <defaultLink>false</defaultLink>
       <type>0</type>
     </ProcessLink>
-    <ProcessLink>
-      <processLinkPK>
-        <companyId>1</companyId>
-        <processId>sugestao_melhorias</processId>
-        <version>1</version>
-        <linkSequence>12</linkSequence>
-      </processLinkPK>
-      <actionLabel></actionLabel>
-      <returnPermited>false</returnPermited>
-      <initialStateSequence>5</initialStateSequence>
-      <finalStateSequence>11</finalStateSequence>
-      <returnLabel></returnLabel>
-      <name></name>
-      <automaticLink>false</automaticLink>
-      <defaultLink>false</defaultLink>
-      <type>0</type>
-    </ProcessLink>
   </list>
   <list/>
   <list/>
@@ -237,152 +173,72 @@
   <list>
     <SwimLane>
       <color>FFFFFF</color>
-      <height>490</height>
-      <width>831</width>
-      <positionX>15</positionX>
-      <positionY>10</positionY>
-      <stateName>Sugestao de Melhorias</stateName>
-      <type>1</type>
-      <parentSequence>0</parentSequence>
-      <swimLanePK>
-        <companyId>1</companyId>
-        <processId>sugestao_melhorias</processId>
-        <version>1</version>
-        <sequence>1</sequence>
-      </swimLanePK>
-    </SwimLane>
-    <SwimLane>
-      <color>FFBE6F</color>
-      <height>245</height>
-      <width>801</width>
-      <positionX>45</positionX>
-      <positionY>10</positionY>
-      <stateName>Solicitante</stateName>
-      <type>2</type>
-      <parentSequence>1</parentSequence>
-      <swimLanePK>
-        <companyId>1</companyId>
-        <processId>sugestao_melhorias</processId>
-        <version>1</version>
-        <sequence>2</sequence>
-      </swimLanePK>
-    </SwimLane>
-    <SwimLane>
-      <color>FFA348</color>
-      <height>245</height>
-      <width>801</width>
-      <positionX>45</positionX>
-      <positionY>255</positionY>
-      <stateName>Triagem</stateName>
-      <type>2</type>
-      <parentSequence>1</parentSequence>
-      <swimLanePK>
-        <companyId>1</companyId>
-        <processId>sugestao_melhorias</processId>
-        <version>1</version>
-        <sequence>3</sequence>
-      </swimLanePK>
-    </SwimLane>
-    <SwimLane>
-      <color>FFA348</color>
-      <height>145</height>
-      <width>801</width>
-      <positionX>30</positionX>
-      <positionY>145</positionY>
-      <stateName>Triagem</stateName>
-      <type>2</type>
-      <parentSequence>1</parentSequence>
-      <swimLanePK>
-        <companyId>1</companyId>
-        <processId>sugestao_melhorias</processId>
-        <version>1</version>
-        <sequence>4</sequence>
-      </swimLanePK>
-    </SwimLane>
-    <SwimLane>
-      <color>FFA348</color>
-      <height>145</height>
-      <width>801</width>
-      <positionX>30</positionX>
-      <positionY>145</positionY>
-      <stateName>Triagem</stateName>
-      <type>2</type>
-      <parentSequence>1</parentSequence>
-      <swimLanePK>
-        <companyId>1</companyId>
-        <processId>sugestao_melhorias</processId>
-        <version>1</version>
-        <sequence>5</sequence>
-      </swimLanePK>
-    </SwimLane>
-    <SwimLane>
-      <color>FFFFFF</color>
       <height>290</height>
-      <width>430</width>
-      <positionX>2000</positionX>
-      <positionY>3020</positionY>
+      <width>831</width>
+      <positionX>10</positionX>
+      <positionY>10</positionY>
       <stateName>Pool</stateName>
       <type>1</type>
       <parentSequence>0</parentSequence>
       <swimLanePK>
         <companyId>1</companyId>
-        <processId>sugestao_melhorias</processId>
+        <processId>sugestao_melhorias1</processId>
         <version>1</version>
-        <sequence>6</sequence>
+        <sequence>1</sequence>
       </swimLanePK>
     </SwimLane>
     <SwimLane>
-      <color>FF7800</color>
-      <height>250</height>
-      <width>796</width>
-      <positionX>50</positionX>
-      <positionY>499</positionY>
-      <stateName>Revisor</stateName>
+      <color>9F9F9F</color>
+      <height>145</height>
+      <width>801</width>
+      <positionX>40</positionX>
+      <positionY>10</positionY>
+      <stateName>Reporter</stateName>
       <type>2</type>
       <parentSequence>1</parentSequence>
       <swimLanePK>
         <companyId>1</companyId>
-        <processId>sugestao_melhorias</processId>
+        <processId>sugestao_melhorias1</processId>
         <version>1</version>
-        <sequence>7</sequence>
+        <sequence>2</sequence>
       </swimLanePK>
     </SwimLane>
     <SwimLane>
-      <color>adc9ac</color>
-      <height>380</height>
-      <width>795</width>
-      <positionX>50</positionX>
-      <positionY>748</positionY>
-      <stateName>Encerramento</stateName>
+      <color>C0C0C0</color>
+      <height>145</height>
+      <width>801</width>
+      <positionX>40</positionX>
+      <positionY>155</positionY>
+      <stateName>Assignee</stateName>
       <type>2</type>
-      <parentSequence>0</parentSequence>
+      <parentSequence>1</parentSequence>
       <swimLanePK>
         <companyId>1</companyId>
-        <processId>sugestao_melhorias</processId>
+        <processId>sugestao_melhorias1</processId>
         <version>1</version>
-        <sequence>8</sequence>
+        <sequence>3</sequence>
       </swimLanePK>
     </SwimLane>
   </list>
   <list>
     <ProcessComponGraf>
       <componType>1</componType>
-      <positionX>260</positionX>
-      <positionY>26</positionY>
+      <positionX>210</positionX>
+      <positionY>20</positionY>
       <processComponGrafPK>
         <companyId>1</companyId>
-        <processId>sugestao_melhorias</processId>
+        <processId>sugestao_melhorias1</processId>
         <version>1</version>
         <componGrafSequence>7</componGrafSequence>
       </processComponGrafPK>
-      <stateName>SugestaoViaWedget</stateName>
+      <stateName>Start</stateName>
     </ProcessComponGraf>
   </list>
   <list>
     <ProcessLinkAssoc>
       <processLinkAssocPK>
         <companyId>1</companyId>
-        <processId>sugestao_melhorias</processId>
+        <processId>sugestao_melhorias1</processId>
         <version>1</version>
         <linkSequence>8</linkSequence>
       </processLinkAssocPK>
@@ -394,24 +250,24 @@
     <ProcessLinkBend>
       <processLinkBendPK>
         <companyId>1</companyId>
-        <processId>sugestao_melhorias</processId>
+        <processId>sugestao_melhorias1</processId>
         <version>1</version>
         <linkSequence>6</linkSequence>
         <bendSequence>1</bendSequence>
       </processLinkBendPK>
-      <positionX>154</positionX>
-      <positionY>360</positionY>
+      <positionX>167</positionX>
+      <positionY>235</positionY>
     </ProcessLinkBend>
     <ProcessLinkBend>
       <processLinkBendPK>
         <companyId>1</companyId>
-        <processId>sugestao_melhorias</processId>
+        <processId>sugestao_melhorias1</processId>
         <version>1</version>
         <linkSequence>8</linkSequence>
         <bendSequence>1</bendSequence>
       </processLinkBendPK>
-      <positionX>156</positionX>
-      <positionY>68</positionY>
+      <positionX>167</positionX>
+      <positionY>48</positionY>
     </ProcessLinkBend>
   </list>
   <list/>

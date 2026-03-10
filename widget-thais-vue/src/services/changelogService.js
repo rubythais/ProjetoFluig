@@ -64,11 +64,13 @@ export async function fetchChangelogVersions(params) {
         : [];
 
     var normalized = normalizeRows(rows);
+    normalized = await hydrateImageUrls(normalized);
     
     // Se dataset vazio, usar mock
     if (normalized.length === 0) {
       console.warn('[changelogService] Dataset vazio, usando dados mock');
-      return normalizeRows(mock);
+      var normalizedMock = normalizeRows(mock);
+      return await hydrateImageUrls(normalizedMock);
     }
     
     console.log('[changelogService] Dados do dataset carregados:', normalized.length, 'versões');
@@ -77,6 +79,75 @@ export async function fetchChangelogVersions(params) {
     console.error('[changelogService] Falha ao buscar dataset. Usando mock.', e);
     return normalizeRows(mock);
   }
+}
+
+async function hydrateImageUrls(items) {
+  if (!Array.isArray(items) || items.length === 0) return [];
+
+  var hydrated = await Promise.all(
+    items.map(async function (item) {
+      var documentId = extractDocumentId(item.imageDocumentId || item.imageRef || '');
+      if (!documentId) return item;
+
+      var publicUrl = await resolvePublicDownloadUrl(documentId);
+      if (!publicUrl) return item;
+
+      return {
+        ...item,
+        imageRef: publicUrl,
+        imageDocumentId: String(documentId)
+      };
+    })
+  );
+
+  return hydrated;
+}
+
+function extractDocumentId(value) {
+  if (!value) return '';
+
+  var raw = String(value).trim();
+  if (!raw) return '';
+
+  if (/^\d+$/.test(raw)) return raw;
+
+  var fromApiUrl = raw.match(/downloadURL\/(\d+)/i);
+  if (fromApiUrl && fromApiUrl[1]) return fromApiUrl[1];
+
+  return '';
+}
+
+async function resolvePublicDownloadUrl(documentId) {
+  try {
+    var response = await fetch('/api/public/ecm/dataset/datasets', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: 'dsDocumentDownloadURL',
+        fields: ['downloadURL', 'status', 'message'],
+        constraints: [
+          {
+            _field: 'documentId',
+            _initialValue: String(documentId),
+            _finalValue: String(documentId),
+            _type: 1
+          }
+        ],
+        order: []
+      })
+    });
+
+    if (response.ok) {
+      var data = await response.json();
+      var values = (data && data.content && data.content.values) ? data.content.values : [];
+      var row = values[0] || {};
+      if (row.downloadURL) return String(row.downloadURL);
+    }
+  } catch (e) {
+    console.warn('[changelogService] Falha ao resolver downloadURL público via dataset:', e);
+  }
+
+  return '/api/public/ecm/document/downloadURL/' + encodeURIComponent(String(documentId));
 }
 
 function normalizeRows(rows) {

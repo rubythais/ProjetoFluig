@@ -56,23 +56,35 @@
 		.row {
 			display: flex;
 			flex-wrap: wrap;
-			margin: -15px;
+			margin: -10px;
+			align-items: flex-start;
 		}
 		.col-md-4, .col-md-6, .col-md-12 {
-			padding: 15px;
+			padding: 10px;
+			flex: 0 0 auto;
+			box-sizing: border-box;
 		}
-		.col-md-4 { width: calc(33.333% - 30px); }
-		.col-md-6 { width: calc(50% - 30px); }
-		.col-md-12 { width: calc(100% - 30px); }
+		.col-md-4 { width: 33.333%; }
+		.col-md-6 { width: 50%; }
+		.col-md-12 { width: 100%; }
+		@media (max-width: 768px) {
+			.col-md-4, .col-md-6 { width: 100%; }
+			.row { margin: -5px; }
+			.col-md-4, .col-md-6, .col-md-12 { padding: 5px; }
+		}
 		.form-group {
-			margin-bottom: 18px;
+			margin-bottom: 15px;
+			display: flex;
+			flex-direction: column;
+			height: 100%;
 		}
 		.form-group label {
 			display: block;
-			margin-bottom: 6px;
+			margin-bottom: 8px;
 			font-weight: 600;
 			color: #333;
 			font-size: 14px;
+			line-height: 1.4;
 		}
 		.form-group label .required {
 			color: #e74c3c;

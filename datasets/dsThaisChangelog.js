@@ -1,13 +1,6 @@
-/**
- * dsThaisChangelog.js
- * Dataset que expõe dados REAIS do formulário ThaisChangelog
- * Busca registros publicados do Fluig ordenados do mais recente para o mais antigo
- */
-
 function createDataset(fields, constraints, sortFields) {
     var dataset = DatasetBuilder.newDataset();
 
-    // Colunas do Dataset
     dataset.addColumn("id");                        
     dataset.addColumn("changelog_version");         
     dataset.addColumn("changelog_status");          
@@ -22,31 +15,25 @@ function createDataset(fields, constraints, sortFields) {
     dataset.addColumn("changes");                   
 
     try {
-        // Extrair constraints
         var documentId = getConstraintValue(constraints, "documentId");
         var status = getConstraintValue(constraints, "status") || "publicado";
         var version = getConstraintValue(constraints, "version");
         
-        // Montar constraints para buscar formulário ThaisChangelog
         var c1 = DatasetFactory.createConstraint("tablename", "ThaisChangelog", "ThaisChangelog", ConstraintType.MUST);
         var constraintsForm = [c1];
         
-        // Se buscar documento específico
         if (documentId) {
             constraintsForm.push(DatasetFactory.createConstraint("documentid", documentId, documentId, ConstraintType.MUST));
         }
         
-        // Filtrar por status
         if (status) {
             constraintsForm.push(DatasetFactory.createConstraint("metadata#changelog_status", status, status, ConstraintType.MUST));
         }
         
-        // Filtrar por versão
         if (version) {
             constraintsForm.push(DatasetFactory.createConstraint("metadata#changelog_version", version, version, ConstraintType.MUST));
         }
         
-        // Buscar registros do formulário ThaisChangelog
         var dsForm = DatasetFactory.getDataset("document", null, constraintsForm, null);
         
         if (dsForm && dsForm.rowsCount > 0) {
@@ -55,7 +42,6 @@ function createDataset(fields, constraints, sortFields) {
             for (var i = 0; i < dsForm.rowsCount; i++) {
                 var docId = dsForm.getValue(i, "documentid");
                 
-                // Buscar mudanças da tabela pai-filho
                 var changes = getChangesFromChildTable(docId);
                 
                 dataset.addRow([
@@ -76,7 +62,6 @@ function createDataset(fields, constraints, sortFields) {
         } else {
             log("[dsThaisChangelog] Nenhum registro encontrado. Retornando dados de exemplo.");
             
-            // Dados de exemplo (apenas se não houver registros reais)
             dataset.addRow([
                 "exemplo_1",
                 "2.4.2",
@@ -162,14 +147,11 @@ function createDataset(fields, constraints, sortFields) {
     return dataset;
 }
 
-/**
- * Busca mudanças (changes) da tabela pai-filho tb_mudancas
- */
+
 function getChangesFromChildTable(documentId) {
     var changes = [];
     
     try {
-        // Buscar registros da tabela pai-filho
         var c1 = DatasetFactory.createConstraint("tablename", "tb_mudancas", "tb_mudancas", ConstraintType.MUST);
         var c2 = DatasetFactory.createConstraint("metadata#parentDocumentId", documentId, documentId, ConstraintType.MUST);
         
@@ -193,9 +175,7 @@ function getChangesFromChildTable(documentId) {
     return changes;
 }
 
-/**
- * Função auxiliar para extrair constraint
- */
+
 function getConstraintValue(constraints, key) {
     if (!constraints || constraints.length === 0) return null;
     
@@ -207,15 +187,12 @@ function getConstraintValue(constraints, key) {
     return null;
 }
 
-/**
- * Função auxiliar para log
- */
+
 function log(message) {
     try {
         if (typeof console !== "undefined" && console.log) {
             console.log(message);
         }
     } catch (e) {
-        // Silent fail
     }
 }

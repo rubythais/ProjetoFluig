@@ -1,15 +1,6 @@
-/**
- * Dataset: dsSugestoes
- * Descrição: Armazena sugestões de melhorias do formulário Sugestao_Melhorias
- * Compatível com formulário sugestao.html
- * Autor: Thais
- * Data: 2026
- */
-
 function createDataset(fields, constraints, sortFields) {
     var dataset = DatasetBuilder.newDataset();
     
-    // Definir colunas do dataset (compatível com formulário)
     dataset.addColumn("documentId");                // ID do documento Fluig
     dataset.addColumn("sugestao_titulo");           // Título da sugestão
     dataset.addColumn("sugestao_tipo");             // melhoria, nova_funcionalidade, correcao
@@ -25,13 +16,11 @@ function createDataset(fields, constraints, sortFields) {
     dataset.addColumn("data_atualizacao");          // Data de atualização
     
     try {
-        // Extrair constraints
         var documentId = getConstraintValue(constraints, "documentId");
         var status = getConstraintValue(constraints, "status");
         var tipo = getConstraintValue(constraints, "tipo");
         var solicitante = getConstraintValue(constraints, "solicitante");
         
-        // Buscar dados do formulário "sugestao" (Sugestao_Melhorias)
         var c1 = DatasetFactory.createConstraint("tablename", "sugestao", "sugestao", ConstraintType.MUST);
         var constraints_form = [c1];
         
@@ -47,7 +36,6 @@ function createDataset(fields, constraints, sortFields) {
             constraints_form.push(DatasetFactory.createConstraint("metadata#sugestao_tipo", tipo, tipo, ConstraintType.MUST));
         }
         
-        // Buscar registros do formulário
         var dsForm = DatasetFactory.getDataset("document", null, constraints_form, null);
         
         if (dsForm && dsForm.rowsCount > 0) {
@@ -69,7 +57,6 @@ function createDataset(fields, constraints, sortFields) {
                 ]);
             }
         } else {
-            // Dados de exemplo (caso não haja registros reais)
             dataset.addRow([
                 "1",
                 "Melhorar performance do dashboard principal",
