@@ -1,84 +1,149 @@
 var FOLDER_ID = 2000;
 
 function createDataset(fields, constraints, sortFields) {
+
     var dataset = DatasetBuilder.newDataset();
-    
+
     dataset.addColumn("documentId");
     dataset.addColumn("downloadURL");
     dataset.addColumn("status");
     dataset.addColumn("message");
-    
+
     try {
-        var action = getConstraintValue(constraints, "action");
-        var fileName = getConstraintValue(constraints, "fileName");
-        var fileContent = getConstraintValue(constraints, "fileContent");
-        var folderIdParam = getConstraintValue(constraints, "folderId");
-        var folderId = folderIdParam ? parseInt(folderIdParam) : FOLDER_ID;
-        
-        if (action === "upload" && fileName && fileContent) {
-            log.info("[dsUploadFile] Iniciando upload: " + fileName + " na pasta " + folderId);
-            
-            var decoded = org.apache.commons.codec.binary.Base64.decodeBase64(fileContent);
-            var inputStream = new java.io.ByteArrayInputStream(decoded);
-            
-            var docService = fluigAPI.getDocumentService();
-            var documentDTO = docService.createDocument(
-                folderId,
-                fileName,
-                inputStream,
-                "Anexo de sugestão de melhoria",
-                "active"
-            );
-            
-            var docId = documentDTO.getDocumentId();
-            
-            var downloadURL = "";
-            try {
-                downloadURL = docService.getDownloadURL(docId);
-            } catch (urlErr) {
-                log.warn("[dsUploadFile] Não foi possível obter URL pública: " + urlErr);
-                downloadURL = "/api/public/ecm/document/downloadURL/" + docId;
-            }
-            
-            dataset.addRow([
-                String(docId),
-                String(downloadURL),
-                "success",
-                "Upload realizado com sucesso"
-            ]);
-            
-            log.info("[dsUploadFile] Upload concluído. DocumentId: " + docId + " URL: " + downloadURL);
-        } else {
-            dataset.addRow([
-                "",
-                "",
-                "error",
-                "Parâmetros inválidos (action, fileName ou fileContent ausentes)"
-            ]);
+
+        var params = extractParams(constraints);
+
+        var normalizedAction = String(params.action || "").toUpperCase();
+
+        if (normalizedAction !== "UPLOAD") {
+            dataset.addRow(["", "", "error", "Ação inválida"]);
+            return dataset;
         }
+
+        if (!params.fileName || !params.fileContent) {
+            dataset.addRow(["", "", "error", "fileName ou fileContent ausente"]);
+            return dataset;
+        }
+
+        logInfo("[dsUploadFile] Upload iniciado: " + params.fileName + " pasta=" + params.folderId);
+
+        var inputStream = decodeBase64ToStream(params.fileContent);
+
+        var result = createDocument(params.folderId, params.fileName, inputStream);
+
+        var downloadURL = resolveDownloadURL(result.documentId);
+
+        dataset.addRow([
+            String(result.documentId),
+            String(downloadURL),
+            "success",
+            "Upload realizado com sucesso"
+        ]);
+
+        logInfo("[dsUploadFile] Upload concluído documentId=" + result.documentId);
+
     } catch (e) {
-        log.error("[dsUploadFile] Erro no upload: " + e.toString());
+
+        logError("[dsUploadFile] Erro upload: " + e);
+
         dataset.addRow([
             "",
             "",
             "error",
-            "Erro ao fazer upload: " + e.message
+            "Erro ao fazer upload: " + (e.message || e)
         ]);
     }
-    
+
     return dataset;
 }
 
-/**
- * Helper para extrair valor de constraint
- */
+
+function extractParams(constraints) {
+
+    var folderParam = getConstraintValue(constraints, "folderId");
+
+    return {
+        action: getConstraintValue(constraints, "action"),
+        fileName: getConstraintValue(constraints, "fileName"),
+        fileContent: getConstraintValue(constraints, "fileContent"),
+        folderId: folderParam ? parseInt(folderParam) : FOLDER_ID
+    };
+}
+
+
+function decodeBase64ToStream(base64Content) {
+
+    try {
+
+        var decoded = org.apache.commons.codec.binary.Base64.decodeBase64(base64Content);
+        return new java.io.ByteArrayInputStream(decoded);
+
+    } catch (e) {
+
+        throw "Falha ao decodificar Base64: " + e;
+    }
+}
+
+
+function createDocument(folderId, fileName, inputStream) {
+
+    var docService = fluigAPI.getDocumentService();
+
+    var documentDTO = docService.createDocument(
+        folderId,
+        fileName,
+        inputStream,
+        "Upload via dataset dsUploadFile",
+        "active"
+    );
+
+    return {
+        documentId: documentDTO.getDocumentId()
+    };
+}
+
+
+function resolveDownloadURL(documentId) {
+
+    try {
+
+        var docService = fluigAPI.getDocumentService();
+        return docService.getDownloadURL(documentId);
+
+    } catch (e) {
+
+        logWarn("[dsUploadFile] Fallback URL download");
+
+        return "/api/public/ecm/document/downloadURL/" + documentId;
+    }
+}
+
+
 function getConstraintValue(constraints, fieldName) {
-    if (constraints) {
-        for (var i = 0; i < constraints.length; i++) {
-            if (constraints[i].fieldName === fieldName || constraints[i]._field === fieldName) {
-                return constraints[i].initialValue || constraints[i]._initialValue || "";
-            }
+
+    if (!constraints) return "";
+
+    for (var i = 0; i < constraints.length; i++) {
+
+        var c = constraints[i];
+
+        if (c.fieldName === fieldName || c._field === fieldName) {
+            return c.initialValue || c._initialValue || c.value || "";
         }
     }
+
     return "";
+}
+
+
+function logInfo(msg) {
+    try { if (log && log.info) log.info(msg); } catch(e){}
+}
+
+function logWarn(msg) {
+    try { if (log && log.warn) log.warn(msg); } catch(e){}
+}
+
+function logError(msg) {
+    try { if (log && log.error) log.error(msg); } catch(e){}
 }

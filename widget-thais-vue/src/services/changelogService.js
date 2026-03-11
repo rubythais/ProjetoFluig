@@ -42,7 +42,11 @@ export async function fetchChangelogVersions(params) {
     }
   ];
 
-  // Sempre tentar o dataset primeiro
+  if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+    var normalizedLocal = normalizeRows(mock);
+    return await hydrateImageUrls(normalizedLocal);
+  }
+
   try {
     var resp = await fetch('/api/public/ecm/dataset/datasets', {
       method: 'POST',
@@ -64,21 +68,104 @@ export async function fetchChangelogVersions(params) {
         : [];
 
     var normalized = normalizeRows(rows);
-    normalized = await hydrateImageUrls(normalized);
+
+    var suggestionRows = await fetchSuggestionRows();
+    var suggestionItems = suggestionRows.map(mapSuggestionToChangelog).filter(Boolean);
+
+    var merged = dedupeByVersion(normalized.concat(suggestionItems));
+    merged = await hydrateImageUrls(merged);
     
-    // Se dataset vazio, usar mock
-    if (normalized.length === 0) {
-      console.warn('[changelogService] Dataset vazio, usando dados mock');
-      var normalizedMock = normalizeRows(mock);
-      return await hydrateImageUrls(normalizedMock);
-    }
-    
-    console.log('[changelogService] Dados do dataset carregados:', normalized.length, 'versões');
-    return normalized;
+    console.log('[changelogService] Dados do dataset carregados:', merged.length, 'versões');
+    return merged;
   } catch (e) {
-    console.error('[changelogService] Falha ao buscar dataset. Usando mock.', e);
-    return normalizeRows(mock);
+    console.error('[changelogService] Falha ao buscar dataset.', e);
+    return [];
   }
+}
+
+async function fetchSuggestionRows() {
+  try {
+    var resp = await fetch('/api/public/ecm/dataset/datasets', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: 'dsSugestoes',
+        fields: [],
+        constraints: [],
+        order: []
+      })
+    });
+
+    if (!resp.ok) return [];
+
+    var data = await resp.json();
+    return data && data.content && data.content.values
+      ? data.content.values
+      : [];
+  } catch (e) {
+    console.warn('[changelogService] Falha ao buscar sugestões:', e);
+    return [];
+  }
+}
+
+function mapSuggestionToChangelog(row) {
+  if (!row) return null;
+
+  var status = String(row.sugestao_status || '').toLowerCase();
+  var shouldPublish = status === 'aprovado' || status === 'finalizado' || status === 'publicado';
+  if (!shouldPublish) return null;
+
+  var version = String(row.sugestao_versao || '').trim();
+  if (!version) {
+    version = 'SUG-' + String(row.documentId || '').trim();
+  }
+
+  return {
+    version: version,
+    releaseDate: row.data_atualizacao || row.data_criacao || '',
+    status: 'publicado',
+    summary: row.sugestao_titulo || 'Sugestão aprovada',
+    description: row.sugestao_descricao || '',
+    categories: splitList(row.sugestao_tipo || ''),
+    tags: splitList(row.sugestao_modulo || ''),
+    pinned: false,
+    imageRef: row.anexoURL || '',
+    imageDocumentId: row.anexoDocumentId || '',
+    changes: [
+      {
+        type: row.sugestao_tipo || 'melhoria',
+        title: row.sugestao_titulo || 'Sugestão',
+        details: row.sugestao_descricao || '',
+        impact: row.sugestao_impacto || '',
+        module: row.sugestao_modulo || ''
+      }
+    ]
+  };
+}
+
+function dedupeByVersion(items) {
+  var map = {};
+
+  (items || []).forEach(function (item) {
+    var key = String(item.version || '').trim();
+    if (!key) return;
+
+    var current = map[key];
+    if (!current) {
+      map[key] = item;
+      return;
+    }
+
+    var currentDate = new Date(current.updatedAt || current.releaseDate || 0).getTime();
+    var nextDate = new Date(item.updatedAt || item.releaseDate || 0).getTime();
+    if (nextDate >= currentDate) {
+      map[key] = item;
+    }
+  });
+
+  return Object.keys(map).map(function (key) {
+    return map[key];
+  });
 }
 
 async function hydrateImageUrls(items) {

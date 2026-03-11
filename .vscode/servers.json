@@ -1,4 +1,17 @@
 {
 	"version": "1.0.0",
-	"configurations": []
+	"configurations": [
+		{
+			"id": "l8yxgad6t1pmmm3fnd5372yrmvmt9m",
+			"name": "strategi",
+			"host": "strategiconsultoria176588.fluig.cloudtotvs.com.br",
+			"ssl": true,
+			"port": 2450,
+			"username": "admin",
+			"password": "eyJpdiI6IjY1OTc2YzcyOTI4NTEzMzI3NjljNDYxMjkwMGQ0MGY0Iiwic2FsdCI6IjdkMzgxZWFiZDkxZGJkMTJmNmIwZTM4ZDYzZDJmMGQ4IiwidGV4dCI6IjI5NGY2NTUyN2FmZDdiMGE3ZmU2ZTgxODJjZjhkMDc0NDYyNGZlNzExZDZmZjMxMDhkYTZhNWYwZDc3N2JiNjQifQ==",
+			"userCode": "admin",
+			"confirmExporting": false,
+			"companyId": 1
+		}
+	]
 }

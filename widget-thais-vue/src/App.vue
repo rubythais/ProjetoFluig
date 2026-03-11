@@ -1,44 +1,89 @@
 <template>
-  <!-- NÃO mexe no portal: só escopo do seu widget -->
   <div class="widget-thais-scope">
-    <!-- ocupa 100% do slot/coluna -->
     <div class="mw-portal-wrap">
-      <!-- card "de widget" contido -->
       <div class="mw-portal-card">
+
+        <!-- Topbar -->
         <div class="mw-topbar">
+
           <div class="mw-title-row">
             <div class="mw-title">{{ titleText }}</div>
-            <button class="btn-suggest" @click="showSuggestModal = true">
+
+            <button
+              class="btn-suggest"
+              @click="showSuggestModal = true"
+            >
               Sugerir Melhoria
             </button>
           </div>
 
+          <!-- filtros -->
           <div class="mw-controls">
+
             <input
               class="mw-input"
               v-model="q"
               placeholder="Buscar (ex.: login, relatório)"
             />
 
+            <!-- categoria -->
             <select class="mw-select" v-model="category">
-              <option value="">Categoria (todas)</option>
-              <option v-if="allCategories.length === 0" disabled>Sem categorias disponíveis</option>
-              <option v-for="c in allCategories" :key="c" :value="c">
+
+              <option value="">Categoria</option>
+
+              <!-- categorias padrão -->
+              <option value="novidades">Novidades</option>
+              <option value="correcoes">Correções</option>
+              <option value="melhorias">Melhorias</option>
+              <option value="seguranca">Segurança</option>
+
+              <!-- categorias vindas do dataset -->
+              <option
+                v-if="allCategories.length === 0"
+                disabled
+              >
+                Sem categorias disponíveis
+              </option>
+
+              <option
+                v-for="c in allCategories"
+                :key="c"
+                :value="c"
+              >
                 {{ c }}
               </option>
+
             </select>
 
+            <!-- tags -->
             <select class="mw-select" v-model="tag">
+
               <option value="">Tag (todas)</option>
-              <option v-if="allTags.length === 0" disabled>Sem tags disponíveis</option>
-              <option v-for="t in allTags" :key="t" :value="t">
+
+              <option
+                v-if="allTags.length === 0"
+                disabled
+              >
+                Sem tags disponíveis
+              </option>
+
+              <option
+                v-for="t in allTags"
+                :key="t"
+                :value="t"
+              >
                 {{ t }}
               </option>
+
             </select>
+
           </div>
         </div>
 
-        <div v-if="loading" class="mw-state">Carregando...</div>
+        <!-- estados -->
+        <div v-if="loading" class="mw-state">
+          Carregando...
+        </div>
 
         <div v-else-if="error" class="mw-state mw-error">
           {{ error }}
@@ -48,6 +93,7 @@
           Nenhuma versão encontrada.
         </div>
 
+        <!-- lista -->
         <div v-else class="mw-list">
           <ChangelogItem
             v-for="v in filtered"
@@ -56,6 +102,7 @@
             :showDetailsLink="true"
           />
         </div>
+
       </div>
     </div>
 
@@ -64,7 +111,8 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+
+import { ref, computed, onMounted } from 'vue'
 import ChangelogItem from './components/changelogItem.vue'
 import SuggestModal from './components/SuggestModal.vue'
 import { fetchChangelogVersions } from './services/changelogService'
@@ -86,118 +134,197 @@ const showSuggestModal = ref(false)
 
 const titleText = computed(() => props.title || 'Changelog')
 
+/* utils */
+
 function toArray(value) {
+
   if (Array.isArray(value)) return value
-  if (value == null) return []
+
+  if (!value) return []
+
   if (typeof value === 'string') {
+
     return value
       .split(/[,;]+/)
-      .map(s => s.trim())
+      .map(v => v.trim())
       .filter(Boolean)
+
   }
+
   return []
 }
 
 function normalizeStatus(s) {
-  return String(s || '').trim().toLowerCase()
+  return String(s || '')
+    .trim()
+    .toLowerCase()
 }
 
 function safeDate(d) {
+
   const dt = new Date(d)
-  return isNaN(dt.getTime()) ? new Date(0) : dt
+
+  return isNaN(dt.getTime())
+    ? new Date(0)
+    : dt
 }
 
+/* categorias */
+
 const allCategories = computed(() => {
+
   const set = new Set()
+
   versions.value.forEach(v => {
-    const cats = toArray(v.categories)
-    if (cats.length > 0) {
-      console.log('[App] Categorias encontradas:', cats, 'de versão', v.version)
-    }
-    cats.forEach(c => set.add(c))
+
+    toArray(v.categories)
+      .forEach(c => set.add(c))
+
   })
-  const result = Array.from(set).sort((a, b) => a.localeCompare(b, 'pt-BR'))
-  console.log('[App] Total de categorias únicas:', result)
-  return result
+
+  return Array
+    .from(set)
+    .sort((a, b) => a.localeCompare(b, 'pt-BR'))
+
 })
+
+/* tags */
 
 const allTags = computed(() => {
+
   const set = new Set()
+
   versions.value.forEach(v => {
-    const tags = toArray(v.tags)
-    if (tags.length > 0) {
-      console.log('[App] Tags encontradas:', tags, 'de versão', v.version)
-    }
-    tags.forEach(t => set.add(t))
+
+    toArray(v.tags)
+      .forEach(t => set.add(t))
+
   })
-  const result = Array.from(set).sort((a, b) => a.localeCompare(b, 'pt-BR'))
-  console.log('[App] Total de tags únicas:', result)
-  return result
+
+  return Array
+    .from(set)
+    .sort((a, b) => a.localeCompare(b, 'pt-BR'))
+
 })
 
-const filtered = computed(() => {
-  const query = q.value.trim().toLowerCase()
-  const wantStatus = normalizeStatus(props.statusPublico)
+/* filtro principal */
 
-  const list = (versions.value || [])
-    .filter(v => !wantStatus || normalizeStatus(v.status) === wantStatus)
+const filtered = computed(() => {
+
+  const query = q.value
+    .trim()
+    .toLowerCase()
+
+  const wantStatus =
+    normalizeStatus(props.statusPublico)
+
+  return (versions.value || [])
+
     .filter(v => {
+
+      if (!wantStatus) return true
+
+      return normalizeStatus(v.status) === wantStatus
+
+    })
+
+    .filter(v => {
+
       const cats = toArray(v.categories)
       const tags = toArray(v.tags)
       const changes = toArray(v.changes)
 
-      if (category.value && !cats.includes(category.value)) return false
-      if (tag.value && !tags.includes(tag.value)) return false
+      if (category.value && !cats.includes(category.value)) {
+        return false
+      }
+
+      if (tag.value && !tags.includes(tag.value)) {
+        return false
+      }
+
       if (!query) return true
 
       const hay = [
+
         v.version,
         v.summary,
         v.description,
         cats.join(' '),
         tags.join(' '),
+
         ...changes.map(ch => {
-          if (typeof ch === 'string') return ch
-          const type = ch.type || ch.changeType || ''
-          const title = ch.title || ch.changeTitle || ''
-          const details = ch.details || ch.changeDescription || ''
-          const mod = ch.module || ch.area || ''
-          return `${type} ${title} ${details} ${mod}`.trim()
+
+          if (typeof ch === 'string') {
+            return ch
+          }
+
+          const type = ch.type || ''
+          const title = ch.title || ''
+          const details = ch.details || ''
+          const mod = ch.module || ''
+
+          return `${type} ${title} ${details} ${mod}`
+
         })
+
       ]
         .filter(Boolean)
         .join(' ')
         .toLowerCase()
 
       return hay.includes(query)
+
     })
 
-  return list.sort((a, b) => {
-    const ap = !!a.pinned
-    const bp = !!b.pinned
-    if (ap !== bp) return ap ? -1 : 1
-    return safeDate(b.releaseDate) - safeDate(a.releaseDate)
-  })
+    .sort((a, b) => {
+
+      const ap = !!a.pinned
+      const bp = !!b.pinned
+
+      if (ap !== bp) {
+        return ap ? -1 : 1
+      }
+
+      return safeDate(b.releaseDate)
+        - safeDate(a.releaseDate)
+
+    })
+
 })
 
+/* carregamento */
+
 onMounted(async () => {
+
   loading.value = true
   error.value = ''
 
   try {
-    const data = await fetchChangelogVersions({ datasetName: props.datasetName })
-    versions.value = Array.isArray(data) ? data : []
-    console.log('[App] Versões carregadas:', versions.value.length)
-    console.log('[App] Dados completos:', JSON.stringify(versions.value, null, 2))
+
+    const data = await fetchChangelogVersions({
+      datasetName: props.datasetName
+    })
+
+    versions.value =
+      Array.isArray(data) ? data : []
+
   } catch (e) {
+
     console.error(e)
+
     error.value =
-      'Não foi possível carregar o changelog. Verifique permissões do dataset e o console do navegador.'
+      'Não foi possível carregar o changelog.'
+
     versions.value = []
+
   } finally {
+
     loading.value = false
+
   }
+
 })
+
 </script>
 
 <style scoped>
@@ -269,7 +396,7 @@ onMounted(async () => {
   padding: 10px 20px;
   font-size: 14px;
   font-weight: 600;
-  color: #ffffff;
+  color: white;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border: none;
   border-radius: 8px;

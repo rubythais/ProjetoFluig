@@ -12,6 +12,10 @@ function createDataset(fields, constraints, sortFields) {
     dataset.addColumn("sugestao_prioridade");       // p0, p1, p2, p3
     dataset.addColumn("sugestao_area_responsavel"); // Área Responsável
     dataset.addColumn("sugestao_justificativa");    // Justificativa da decisão
+    dataset.addColumn("sugestao_versao");           // Versão relacionada
+    dataset.addColumn("sugestao_beneficio");        // Benefício principal
+    dataset.addColumn("anexoDocumentId");           // DocumentId do anexo
+    dataset.addColumn("anexoURL");                  // URL pública do anexo
     dataset.addColumn("data_criacao");              // Data de criação
     dataset.addColumn("data_atualizacao");          // Data de atualização
     
@@ -21,8 +25,7 @@ function createDataset(fields, constraints, sortFields) {
         var tipo = getConstraintValue(constraints, "tipo");
         var solicitante = getConstraintValue(constraints, "solicitante");
         
-        var c1 = DatasetFactory.createConstraint("tablename", "sugestao", "sugestao", ConstraintType.MUST);
-        var constraints_form = [c1];
+        var constraints_form = [];
         
         if (documentId) {
             constraints_form.push(DatasetFactory.createConstraint("documentid", documentId, documentId, ConstraintType.MUST));
@@ -36,7 +39,19 @@ function createDataset(fields, constraints, sortFields) {
             constraints_form.push(DatasetFactory.createConstraint("metadata#sugestao_tipo", tipo, tipo, ConstraintType.MUST));
         }
         
-        var dsForm = DatasetFactory.getDataset("document", null, constraints_form, null);
+        var dsForm = null;
+        var tableNames = ["sugestao", "Sugestao_Melhorias"];
+
+        for (var t = 0; t < tableNames.length; t++) {
+            var formConstraints = constraints_form.slice(0);
+            formConstraints.push(DatasetFactory.createConstraint("tablename", tableNames[t], tableNames[t], ConstraintType.MUST));
+            var current = DatasetFactory.getDataset("document", null, formConstraints, null);
+
+            if (current && current.rowsCount > 0) {
+                dsForm = current;
+                break;
+            }
+        }
         
         if (dsForm && dsForm.rowsCount > 0) {
             for (var i = 0; i < dsForm.rowsCount; i++) {
@@ -52,62 +67,18 @@ function createDataset(fields, constraints, sortFields) {
                     dsForm.getValue(i, "sugestao_prioridade") || "",
                     dsForm.getValue(i, "sugestao_area_responsavel") || "",
                     dsForm.getValue(i, "sugestao_justificativa") || "",
+                    dsForm.getValue(i, "sugestao_versao") || "",
+                    dsForm.getValue(i, "sugestao_beneficio") || "",
+                    dsForm.getValue(i, "anexoDocumentId") || "",
+                    dsForm.getValue(i, "anexoURL") || "",
                     dsForm.getValue(i, "documentcreationdate") || "",
                     dsForm.getValue(i, "documentlastmodifieddate") || ""
                 ]);
             }
-        } else {
-            dataset.addRow([
-                "1",
-                "Melhorar performance do dashboard principal",
-                "melhoria",
-                "Dashboard",
-                "alto",
-                "O dashboard demora muito para carregar quando há muitos registros. Seria interessante implementar paginação ou lazy loading.",
-                "João Silva",
-                "em_triagem",
-                "p1",
-                "",
-                "",
-                "2026-01-15 10:30:00",
-                "2026-01-15 10:30:00"
-            ]);
-            
-            dataset.addRow([
-                "2",
-                "Adicionar filtro avançado nos relatórios",
-                "nova_funcionalidade",
-                "Relatórios",
-                "medio",
-                "Incluir opção de filtrar relatórios por múltiplos critérios simultâneos (data, usuário, status, módulo).",
-                "Maria Santos",
-                "em_revisao",
-                "p2",
-                "Desenvolvimento",
-                "Funcionalidade aprovada para próxima sprint. Benefício claro para usuários.",
-                "2026-01-14 09:15:00",
-                "2026-01-17 16:45:00"
-            ]);
-            
-            dataset.addRow([
-                "3",
-                "Corrigir problema de logout automático",
-                "correcao",
-                "Login",
-                "alto",
-                "Usuários estão sendo deslogados automaticamente após 5 minutos de inatividade, quando o esperado seria 30 minutos.",
-                "Carlos Souza",
-                "aprovado",
-                "p0",
-                "Infraestrutura",
-                "Bug crítico identificado. Problema na configuração do timeout de sessão. Será corrigido na próxima manutenção.",
-                "2026-01-10 14:20:00",
-                "2026-01-12 11:30:00"
-            ]);
         }
         
     } catch (e) {
-        log.error("Erro no dataset dsSugestoes: " + e.toString());
+        safeLog("error", "Erro no dataset dsSugestoes: " + e.toString());
     }
     
     return dataset;
@@ -125,4 +96,13 @@ function getConstraintValue(constraints, fieldName) {
         }
     }
     return null;
+}
+
+function safeLog(level, message) {
+    try {
+        if (typeof log !== "undefined" && log[level]) {
+            log[level](message);
+        }
+    } catch (e) {
+    }
 }

@@ -16,4 +16,4 @@ view.file=view.ftl
 edit.file=edit.ftl
 locale.file.base.name=Widget_thais
 application.resource.js=/resources/js/Widget_thais.js
-application.resource.css=/resources/css/Widget_thais.css/resources/css/fluig-override.css
+application.resource.css=/resources/css/Widget_thais.css

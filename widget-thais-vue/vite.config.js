@@ -5,6 +5,7 @@ import vue from '@vitejs/plugin-vue'
 
 // https://vite.dev/config/
 export default defineConfig({
+    base: './',
     plugins: [vue()],
     resolve: {
         alias: {
@@ -14,6 +15,7 @@ export default defineConfig({
     build: {
         outDir: '../wcm/widget/Widget_thais/src/main/webapp/resources/js/app-vue',
         emptyOutDir: true,
+        sourcemap: true,
         rollupOptions: {
             output: {
                 entryFileNames: `[name].js`,

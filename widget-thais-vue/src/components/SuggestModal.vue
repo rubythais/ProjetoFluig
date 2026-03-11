@@ -93,7 +93,7 @@
                   <option value="">Selecione...</option>
                   <option value="melhoria">Melhoria</option>
                   <option value="correcao">Correção</option>
-                  <option value="funcionalidade">Nova Funcionalidade</option>
+                  <option value="nova_funcionalidade">Nova Funcionalidade</option>
                 </select>
               </div>
             </div>
@@ -269,18 +269,30 @@ async function handleSubmit() {
   isSubmitting.value = true
 
   try {
+    console.log('[SuggestModal] handleSubmit - iniciando')
+    console.log('[SuggestModal] handleSubmit - formData.value:', JSON.stringify(formData.value, null, 2))
+    console.log('[SuggestModal] handleSubmit - selectedFile:', selectedFile.value?.name || 'nenhum')
+
     // Validar campos obrigatórios
     if (!formData.value.titulo || !formData.value.descricao || !formData.value.modulo || !formData.value.tipo) {
-      throw new Error('Preencha todos os campos obrigatórios')
+      const missing = [
+        !formData.value.titulo && 'titulo',
+        !formData.value.descricao && 'descricao',
+        !formData.value.modulo && 'modulo',
+        !formData.value.tipo && 'tipo'
+      ].filter(Boolean).join(', ')
+      const errMsg = `Preencha todos os campos obrigatórios: ${missing}`
+      console.error('[SuggestModal] ' + errMsg)
+      throw new Error(errMsg)
     }
 
     // Upload opcional + Start BPM com formFields e anexo
-    console.log('[SuggestModal] Enviando sugestão...')
+    console.log('[SuggestModal] Validação OK. Enviando sugestão...')
     const processResult = await submitSuggestion(formData.value, selectedFile.value)
     
     protocol.value = processResult.protocol
     success.value = true
-    console.log('[SuggestModal] Processo iniciado:', processResult)
+    console.log('[SuggestModal] Processo iniciado com sucesso:', processResult)
 
     // Fechar modal após 3 segundos
     setTimeout(() => {
